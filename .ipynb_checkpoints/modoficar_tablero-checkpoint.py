@@ -1,3 +1,4 @@
+            
 #Tablero
 #Se encarga de mostrar el tablero y las fichas
 def mostrar_tablero(tablero):
@@ -19,7 +20,41 @@ def mostrar_tablero(tablero):
                 blancas_coords.append((fila, columna))
         print("\n  +---+---+---+---+---+---+---+---+")
 
-#Se encarga de actualizar la posición de las piezas en el tablero a medida que avanza el juego
+
+def añadir_ficha_tablero(turno, fila, columna, tablero):
+    añadida = False
+    if turno == 1: #turno de las negras
+        if not (tablero[fila][columna] == 0):
+            print("Posición inválida. En esa posición ya se encuentra una ficha.")
+            return False
+        if(reglas_de_movimiento(turno,fila,columna)):
+            tablero[fila][columna] = 2  # Ficha negra
+            ficha_negra([fila,columna])
+            cambio_de_color_fichas(turno,fila,columna,tablero)
+            turno = 2
+            añadida = True
+        else:
+            print("No cumple con las reglas.")
+            
+    elif turno == 2: #turno de las blancas
+        if not (tablero[fila][columna] == 0):
+            print("Posición inválida. En esa posición ya se encuentra una ficha.")
+            return False
+        if (reglas_de_movimiento(turno,fila,columna)):
+            tablero[fila][columna] = 1  # Ficha blanca
+            ficha_blanca([fila,columna])
+            cambio_de_color_fichas(turno,fila,columna,tablero)
+            turno = 1
+            añadida = True
+        else:
+            print("No cumple con las reglas.")
+    else:
+        print("Opción no válida. Intente de nuevo.")
+    
+    if añadida:
+        return tablero
+
+        #Se encarga de actualizar la posición de las piezas en el tablero a medida que avanza el juego
 def modificar_tablero(tablero):
     turno = 1  # Empieza el jugador negro
     contador_salta_turno = 0
@@ -74,38 +109,15 @@ def modificar_tablero(tablero):
             
 
             #comprueba que si las reglas se cumplen, entonces se produzca el cambio en el tablero
-            if turno == 1: #turno de las negras
-                print("nueva fila",new_fila)
-                print("nueva c",new_fila)
-                if not (tablero[new_fila][new_columna] == 0):
-                    print("Posición inválida. En esa posición ya se encuentra una ficha.")
-                    continue
-                if(reglas_de_movimiento(turno,new_fila,new_columna)):
-                    tablero[new_fila][new_columna] = 2  # Ficha negra
-                    ficha_negra([new_fila,new_columna])
-                    cambio_de_color_fichas(turno,new_fila,new_columna,tablero)
-                    turno = 2
-                else:
-                    print("No cumple con las reglas.")
-                    
-            elif turno == 2: #turno de las blancas
-                if not (tablero[new_fila][new_columna] == 0):
-                    print("Posición inválida. En esa posición ya se encuentra una ficha.")
-                    continue
-                if (reglas_de_movimiento(turno,new_fila,new_columna)):
-                    tablero[new_fila][new_columna] = 1  # Ficha blanca
-                    ficha_blanca([new_fila,new_columna])
-                    cambio_de_color_fichas(turno,new_fila,new_columna,tablero)
-                    turno = 1
-                else:
-                    print("No cumple con las reglas.")
-            else:
-                print("Opción no válida. Intente de nuevo.")
+            
+            tablero = añadir_ficha_tablero(turno,new_fila,new_columna,tablero)
             
             
 
         except ValueError:
             print("Por favor ingrese números válidos.")
+            
+
 
 #Ficha negra
 #Lista de fichas blancas que están en el tablero, cada vez que hay una nueva ficha blanca se añade a esta lista
@@ -181,10 +193,10 @@ def comprobar(fichas_propias,fila_ficha_contraria,columna_ficha_contraria,posici
     cumple = False
 
     cumple = comprobar_horizontal(fichas_propias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva)
-   # if (not cumple):
-     #   cumple = comprobar_vertical(fichas_propias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva)
-      #  if(not cumple):
-       #     cumple = comprobar_diagonal(fichas_propias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva)
+    if (not cumple):
+        cumple = comprobar_vertical(fichas_propias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva)
+        if(not cumple):
+            cumple = comprobar_diagonal(fichas_propias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva)
 
     return cumple
 
@@ -193,18 +205,15 @@ def comprobar_horizontal(fichas_propias,fila_ficha_contraria,columna_ficha_contr
     print("entra primero")
     if ((columna_ficha_contraria == posicion_columna_nueva + 1) and (fila_ficha_contraria == posicion_fila_nueva)):
         print("fichas",fichas_propias)
-        for c_pos in range(posicion_columna_nueva+1,8): #pongo 8-la posicion, pq quiero llegar desde esa columna a la última columna
-            print("coordenada actual",c_pos)
+        for c_pos in range(2,8-posicion_columna_nueva): #pongo 8-la posicion, pq quiero llegar desde esa columna a la última columna
             #veo si en las siguientes columnas a la derecha, hay alguna del color de mi turno
-            if ([c_pos,fila_ficha_contraria] in ficha_blanca()):
-                continue
-            elif ([c_pos,fila_ficha_contraria] in fichas_propias):
-                print("esto claro q lo cumple")
-                # Si encontramos una del mismo color, la secuencia es válida
-                cumple = True
-                break
-            else:
-                # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
+            for [fila,columna] in fichas_propias:
+                if(fila == posicion_fila_nueva):
+                    if(columna == posicion_columna_nueva+c_pos):
+                        cumple = True
+                if cumple:
+                    break
+            if cumple:
                 break
                 
     #si sigue siendo falso, comprueba si la blanca se encuentra a la izquierda de la negra y que se encuentre en la misma fila
@@ -288,7 +297,7 @@ def comprobar_diagonal(fichas_propias,fila_ficha_contraria,columna_ficha_contrar
 
         #comprueba si es diagonal izquierda arriba
         if (not cumple and (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva +1)):
-            for c_neg in range(2,8-posicion_columna_nueva):
+            for c_neg in range(2,posicion_columna_nueva+1):
                 #compruebo q hay una negra en el otro lado de la diagonal de la ficha blanca
                 for [fila,columna] in fichas_propias:
                     if((columna == posicion_columna_nueva-c_neg) and (fila == posicion_fila_nueva+f_pos)):
@@ -300,10 +309,10 @@ def comprobar_diagonal(fichas_propias,fila_ficha_contraria,columna_ficha_contrar
 
         #comprueba si es diagonal derecha abajo
         if (not cumple and (columna_ficha_contraria == posicion_columna_nueva+1 and fila_ficha_contraria == posicion_fila_nueva +1)):
-            for c_pos in range(2,posicion_columna_nueva+1): 
+            for c_pos in range(2,8-posicion_columna_nueva): 
                 #compruebo q hay una negra en el otro lado de la diagonal de la ficha blanca
                 for [fila,columna] in fichas_propias:
-                    if((columna == posicion_columna_nueva-c_pos) and (fila == posicion_fila_nueva-f_pos)):
+                    if((columna == posicion_columna_nueva+c_pos) and (fila == posicion_fila_nueva+f_pos)):
                         cumple = True
                     if cumple:
                         break
