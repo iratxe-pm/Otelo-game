@@ -11,7 +11,7 @@ def mostrar_tablero(tablero):
         for columna in range(8):
             if tablero[fila][columna] == 0:
                 print("   |", end="")
-            elif tablero[fila][columna] == 2:
+            elif tablero[fila][columna] == 1:
                 print(" ● |", end="")  # Negra
                 negras_coords.append((fila, columna))
             else:
@@ -48,7 +48,7 @@ def modificar_tablero(tablero):
 
             if(contador_salta_turno<2):
                 print("aqui no entra")
-                if (len(posibles_movimientos(tablero,turno)) != 0):
+                if (posibles_movimientos(turno)):
                     print("entra aqui")
                     #Selección de casilla a la que se mueve la ficha
                     new_fila = int(input("Ingrese la fila a donde va a mover la ficha (0-7): "))
@@ -81,7 +81,7 @@ def modificar_tablero(tablero):
                     print("Posición inválida. En esa posición ya se encuentra una ficha.")
                     continue
                 if(reglas_de_movimiento(turno,new_fila,new_columna)):
-                    tablero[new_fila][new_columna] = 2  # Ficha negra
+                    tablero[new_fila][new_columna] = 1  # Ficha negra
                     ficha_negra([new_fila,new_columna])
                     cambio_de_color_fichas(turno,new_fila,new_columna,tablero)
                     turno = 2
@@ -93,7 +93,7 @@ def modificar_tablero(tablero):
                     print("Posición inválida. En esa posición ya se encuentra una ficha.")
                     continue
                 if (reglas_de_movimiento(turno,new_fila,new_columna)):
-                    tablero[new_fila][new_columna] = 1  # Ficha blanca
+                    tablero[new_fila][new_columna] = 2  # Ficha blanca
                     ficha_blanca([new_fila,new_columna])
                     cambio_de_color_fichas(turno,new_fila,new_columna,tablero)
                     turno = 1
@@ -140,10 +140,10 @@ def tablero(blanca, negra) :
         Tablero.append(Fila)
 
     for i in blanca:
-        Tablero [i[0]][i[1]] = 1
+        Tablero [i[0]][i[1]] = 2
 
     for i in negra:
-        Tablero [i[0]][i[1]] = 2
+        Tablero [i[0]][i[1]] = 1
 
     return Tablero
     
@@ -319,7 +319,7 @@ def cambio_de_color_fichas(turno,posicion_fila_ficha,posicion_columna_ficha,tabl
         for n in negras:
             ficha_blanca().append(n)
             ficha_negra().remove(n)
-            tablero[n[0]][n[1]] = 1
+            tablero[n[0]][n[1]] = 2
 
     else:
         ficha_propia ="negra"
@@ -327,7 +327,7 @@ def cambio_de_color_fichas(turno,posicion_fila_ficha,posicion_columna_ficha,tabl
         for n in blancas:
             ficha_blanca().remove(n)
             ficha_negra().append(n)
-            tablero[n[0]][n[1]] = 2
+            tablero[n[0]][n[1]] = 1
 
 #se le manda la ficha a cambiar, en la posicion que se quiere cambiar
 def obtener_fichas_cambiar(ficha_propia,posicion_fila_ficha,posicion_columna_ficha):
@@ -363,34 +363,39 @@ def obtener_fichas_cambiar(ficha_propia,posicion_fila_ficha,posicion_columna_fic
 ##Turno
 
 #devuelve true si puede jugar
-def posibles_movimientos(tablero, turno):
-    posibles_acciones = []
+def posibles_movimientos(turno):
+    puede_jugar = False
     if (turno == 1):
         ficha_actual = "negra"
     else:
         ficha_actual = "blanca"
-
     fichas_blancas = ficha_blanca()
     fichas_negras = ficha_negra()
-
     if (len(fichas_blancas) + len(fichas_negras)<64):
         for fila_tabl in range(8):
             for columna_tabl in range(8):
-                if (tablero[fila_tabl][columna_tabl] == 0):
+                if (([fila_tabl, columna_tabl] not in ficha_blanca()) and ([fila_tabl, columna_tabl] not in ficha_negra())):
                     if ficha_actual == "blanca":
                         if(len(fichas_negras)>0):
                             for[fila_n, columna_n] in fichas_negras:
                                 puede_jugar = comprobar(fichas_blancas,fila_n,columna_n,fila_tabl,columna_tabl)
                                 if puede_jugar:
-                                    posibles_acciones.append([fila_tabl,columna_tabl])
+                                    break
                     else:
                         if(len(fichas_blancas)>0):
                             for[fila_b,columna_b] in fichas_blancas:
                                 if comprobar(fichas_negras,fila_b,columna_b,fila_tabl,columna_tabl):
                                     puede_jugar = True
-                                    if puede_jugar:
-                                        posibles_acciones.append([fila_tabl,columna_tabl])            
-    return posibles_acciones
+                                    break
+                            if puede_jugar:
+                                break
+                   
+                if puede_jugar:
+                        break
+            if puede_jugar:
+                        break
+                
+    return puede_jugar
 
 def main():
     print("Bienvenido al editor de tablero de Otelo")
