@@ -20,6 +20,7 @@ def reglas_de_movimiento(turno, posicion_fila_nueva, posicion_columna_nueva) :
 #para comprobar q hay coordenadas al rededor de la ficha válidas
 def comprobar_coordenadas_alrededor(ficha,posicion_fila_nueva,posicion_columna_nueva):
     cumple = False
+    fichas = []
     if ficha == "negra":
         fichas_contrarias = ficha_blanca()
         fichas_propias = ficha_negra()
@@ -27,7 +28,7 @@ def comprobar_coordenadas_alrededor(ficha,posicion_fila_nueva,posicion_columna_n
         fichas_contrarias = ficha_negra()
         fichas_propias = ficha_blanca()
         
-    for [fila,columna] in fichas_contrarias :
+    for [fila,columna] in fichas :
         cumple = comprobar(fichas_propias,fichas_contrarias,fila,columna,posicion_fila_nueva,posicion_columna_nueva)
         if cumple:
             break
@@ -54,9 +55,9 @@ def comprobar_horizontal(fichas_propias,fichas_contrarias,fila_ficha_contraria,c
             for c_pos in range(posicion_columna_nueva+2,8): #pongo 8-la posicion, pq quiero llegar desde esa columna a la última columna
                 print("coordenada actual",c_pos)
                 #veo si en las siguientes columnas a la derecha, hay alguna del color de mi turno
-                if ([posicion_fila_nueva,c_pos] in fichas_contrarias):
+                if ([fila_ficha_contraria,c_pos] in fichas_contrarias):
                     continue
-                elif ([posicion_fila_nueva,c_pos] in fichas_propias):
+                elif ([fila_ficha_contraria,c_pos] in fichas_propias):
                     print("esto claro q lo cumple")
                     # Si encontramos una del mismo color, la secuencia es válida
                     cumple = True
