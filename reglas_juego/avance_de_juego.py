@@ -83,7 +83,7 @@ def modificar_tablero(tablero):
                 else:
                      ganadores(0)
                      print("¡¡¡EMPATE !!!")
-                break
+                break #este break como juego_sigue se pone a false a lo mejor se deberia de quitar, revisar luego 
             
 
         except ValueError:
