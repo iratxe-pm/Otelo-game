@@ -236,7 +236,7 @@ def posibles_movimientos(tablero, turno):
                         if(len(fichas_negras)>0):
                             for[fila_n, columna_n] in fichas_negras:
                                 puede_jugar = comprobar(fichas_blancas,fichas_negras,fila_n,columna_n,fila_tabl,columna_tabl)
-                                if puede_jugar:
+                                if puede_jugar:  
                                     posibles_acciones.append([fila_tabl,columna_tabl])
                     else:
                         if(len(fichas_blancas)>0):

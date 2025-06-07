@@ -67,25 +67,28 @@ def modificar_tablero(tablero):
             else:
                 print("Juego terminado")
                 juego_sigue = False
-                if (len(ficha_negra()) > len(ficha_blanca())):
-                    if turno == 1:
-                        ganadores(1)
-                    else:
-                        ganadores(-1)
-                    print("¡¡¡GANA LAS NEGRAS !!!")
-
-                elif (len(ficha_negra()) < len(ficha_blanca())):
-                    if turno == 1:
-                        ganadores(-1)
-                    else:
-                        ganadores(1)
-                    print("¡¡¡GANA LAS BLANCAS !!!")
-                else:
-                     ganadores(0)
-                     print("¡¡¡EMPATE !!!")
+                ganador(turno)
                 break
             
 
         except ValueError:
             print("Por favor ingrese números válidos.")
+
+def ganador(turno):
+    if (len(ficha_negra()) > len(ficha_blanca())):
+        if turno == 1:
+            ganadores(1)
+        else:
+            ganadores(-1)
+        print("¡¡¡GANA LAS NEGRAS !!!")
+
+    elif (len(ficha_negra()) < len(ficha_blanca())):
+        if turno == 1:
+            ganadores(-1)
+        else:
+            ganadores(1)
+        print("¡¡¡GANA LAS BLANCAS !!!")
+    else:
+            ganadores(0)
+            print("¡¡¡EMPATE !!!")
 
