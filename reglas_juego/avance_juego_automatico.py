@@ -34,7 +34,7 @@ def partida_automática(turno, tablero_actual):
         if(contador_salta_turno<2):
                 movimientos = posibles_movimientos(tablero,turno)
                 if (len(movimientos) != 0):
-                    accion_seleccionada = random.choice(movimientos)[0]
+                    accion_seleccionada = random.choice(movimientos)
                     turno = turnos(turno, accion_seleccionada[0], accion_seleccionada[1], tablero)   
                 
                 else:
@@ -46,18 +46,20 @@ def partida_automática(turno, tablero_actual):
 
         else:
                 juego_sigue = False
-                if (len(ficha_negra()) > len(ficha_blanca())):
-                    if turno == 1:
-                        return 1
-                    else:
-                        return -1
+                return ganador(turno)
 
-                elif (len(ficha_negra()) < len(ficha_blanca())):
-                    if turno == 1:
-                        return -1
-                    else:
-                        return 1
-                else:
-                    return 0
-            
+def ganador(turno):
+    if (len(ficha_negra()) > len(ficha_blanca())):
+        if turno == 1:
+            return 1
+        else:
+            return -1
+
+    elif (len(ficha_negra()) < len(ficha_blanca())):
+        if turno == 1:
+            return -1
+        else:
+            return 1
+    else:
+        return 0          
 

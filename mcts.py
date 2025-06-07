@@ -114,7 +114,7 @@ def retropopagación (partida_simulada, nodo):
     actual = nodo
     while actual is not None:
         actual.visitas += 1
-        actual.recompensa_acomulada += resultado
-        resultado *= -1  # alternar perspectiva para el oponente xq el padre y el hijo tienen turnos opuestos
+        actual.recompensa_acomulada += partida_simulada
+        partida_simulada *= -1  # alternar perspectiva para el oponente xq el padre y el hijo tienen turnos opuestos
         actual = actual.padre #va actualizando todos los anteriores
 
