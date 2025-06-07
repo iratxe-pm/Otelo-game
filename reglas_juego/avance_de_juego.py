@@ -24,6 +24,8 @@ def turnos(turno, new_fila, new_columna, tablero):
 
             return turno
 
+
+
 def modificar_tablero(tablero):
     turno = 1  # Empieza el jugador negro
     contador_salta_turno = 0

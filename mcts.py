@@ -1,6 +1,8 @@
 import juego_otelo 
 import math
 import random
+import avance_de_juego
+from copy import deepcopy
 #los de ficha negra son los nodos de nivel impar, y lo de blanca se encuentran en el nivel par
 
 """
@@ -17,7 +19,7 @@ class crear_nodo:
         self.action = action #guarda la accion que hace que lleguen a ese nodo
         self.hijos = [] #guarda los hijos de ese nodo; son los nuevos estados del tablero
         self.acciones_posibles = juego_otelo.posibles_movimientos(tablero,turno) #aqui guarda las acciones de ese nodo que pueda tomar
-        self.acciones_realizadas = [] #para comprobar si se ha extendido del todo o no el nodo
+        self.acciones_hechas = [] #para comprobar si se ha extendido del todo o no el nodo
         #estos dos de abajo sirve para calcular después el UCT 
         self.visitas = 0 #se guarda el numero de veces q se accede a este nodo; al inicio es 0 pq solo se crea no se visita
         self.recompensa_acomulada = 0 #va guardando la recompensa
@@ -61,7 +63,8 @@ def seleccion_nodo_siguiente(nodo):
 def expandir(nodo):
     for accion in nodo.acciones_posibles:
         if not accion in nodo.acciones_hechas:
-            tablero_nuevo = nodo.tablero[accion[0]][accion[1]]
+            tablero_copia = deepcopy(nodo.tablero) #para hacer una copia mas profunda y que no se cambie el nodo padre
+            tablero_nuevo = avance_de_juego.turnos(nodo.turno, accion[0], accion[1], tablero_copia)
             if(nodo.turno == 2):
                 turno = 1
             else:
@@ -95,7 +98,3 @@ def seleccion_hijo_uct(nodo):
     hijo_seleccionado = random.choice(mejor_hijo) 
              
     return hijo_seleccionado
-
-
-    
-
