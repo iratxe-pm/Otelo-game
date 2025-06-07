@@ -52,12 +52,10 @@ def comprobar_horizontal(fichas_propias,fichas_contrarias,fila_ficha_contraria,c
         #derecha
         if (columna_ficha_contraria == posicion_columna_nueva + 1) :
             for c_pos in range(posicion_columna_nueva+2,8): #pongo 8-la posicion, pq quiero llegar desde esa columna a la última columna
-                print("coordenada actual",c_pos)
                 #veo si en las siguientes columnas a la derecha, hay alguna del color de mi turno
                 if ([posicion_fila_nueva,c_pos] in fichas_contrarias):
                     continue
                 elif ([posicion_fila_nueva,c_pos] in fichas_propias):
-                    print("esto claro q lo cumple")
                     # Si encontramos una del mismo color, la secuencia es válida
                     cumple = True
                     break
@@ -66,14 +64,17 @@ def comprobar_horizontal(fichas_propias,fichas_contrarias,fila_ficha_contraria,c
                     break
         #izquierda            
         elif ((columna_ficha_contraria == posicion_columna_nueva-1)):
-            for c_neg in range(2,posicion_columna_nueva+1): 
-                for [fila,columna] in fichas_propias:
-                    if((fila == posicion_fila_nueva) and (columna == posicion_columna_nueva-c_neg)):
-                        cumple = True
-                        break
-                if cumple:
+            for c_neg in range(posicion_columna_nueva - 2, -1, -1): 
+                #veo si en las siguientes columnas a la derecha, hay alguna del color de mi turno
+                if ([posicion_fila_nueva,c_neg] in fichas_contrarias):
+                    continue
+                elif ([posicion_fila_nueva,c_neg] in fichas_propias):
+                    # Si encontramos una del mismo color, la secuencia es válida
+                    cumple = True
                     break
-    
+                else:
+                    # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
+                    break
     return cumple
 
 #VERTICAL
@@ -82,70 +83,137 @@ def comprobar_vertical(fichas_propias,fichas_contrarias,fila_ficha_contraria,col
     if(columna_ficha_contraria == posicion_columna_nueva):
         #abajo
         if ((fila_ficha_contraria == posicion_fila_nueva+1)):
-            for f_pos in range(2,8-posicion_fila_nueva):       
-                for [fila,columna] in fichas_propias:
-                    if((columna == posicion_columna_nueva) and (fila ==  posicion_fila_nueva+f_pos)):
-                        cumple = True
-                        break
-                if cumple:
+            for f_pos in range(posicion_fila_nueva+2,8): #pongo 8-la posicion, pq quiero llegar desde esa columna a la última columna
+                #veo si en las siguientes columnas a la derecha, hay alguna del color de mi turno
+                if ([f_pos,posicion_columna_nueva] in fichas_contrarias):
+                    continue
+                elif ([f_pos,posicion_columna_nueva] in fichas_propias):
+                    # Si encontramos una del mismo color, la secuencia es válida
+                    cumple = True
+                    break
+                else:
+                    # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
                     break
         #arriba       
         elif((fila_ficha_contraria == posicion_fila_nueva-1)):
-            for f_neg in range(2,posicion_fila_nueva+1):
-                for [fila,columna] in fichas_propias:
-                    if((columna == posicion_columna_nueva) and (fila ==  posicion_fila_nueva-f_neg)):
-                        cumple = True
-                        break
-                if cumple:
+            for f_neg in range(posicion_fila_nueva -2, -1, -1): 
+                #veo si en las siguientes columnas a la derecha, hay alguna del color de mi turno
+                if ([f_neg,posicion_columna_nueva] in fichas_contrarias):
+                    continue
+                elif ([f_neg,posicion_columna_nueva] in fichas_propias):
+                    # Si encontramos una del mismo color, la secuencia es válida
+                    cumple = True
+                    break
+                else:
+                    # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
                     break
     return cumple
 
 #DIAGONAL
 def comprobar_diagonal(fichas_propias,fichas_contrarias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva):
     cumple = False
+            #yo quiero ponerla a la izquierda abajo de una ficha contraria  
+            # este si funciona    
+    if (columna_ficha_contraria == posicion_columna_nueva +1 and fila_ficha_contraria == posicion_fila_nueva -1):
+        return comprobar_diagonal_arriba_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
 
-    for f_neg in range(2,posicion_fila_nueva):
-        #diagonal derecha arriba        
-        if (columna_ficha_contraria == posicion_columna_nueva+1 and fila_ficha_contraria == posicion_fila_nueva -1):
-            for c_pos in range(2,8-posicion_columna_nueva): 
-                for [fila,columna] in fichas_propias:
-                    if((columna == posicion_columna_nueva+c_pos) and (fila == posicion_fila_nueva-f_neg)):
-                        cumple = True
-                        break
-                if cumple:
-                    break
-
-        #diagonal izquierda arriba        
-        if (not cumple and (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva -1)):
-            for c_neg in range(2,posicion_columna_nueva+1): 
-                for [fila,columna] in fichas_propias:
-                    if((columna == posicion_columna_nueva-c_neg) and (fila == posicion_fila_nueva-f_neg)):
-                        cumple = True
-                        break
-                if cumple:
-                    break
+    #este no
+    #pongo la nueva ficha a la derecha abajo de una ficha contraria    
+    elif (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva -1):
+        return comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
     
-    for f_pos in range(2,8-posicion_fila_nueva):
+    #pongo la nueva ficha a la derecha arriba de una ficha contraria
+    elif (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva +1):
+        return comprobar_diagonal_abajo_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
 
-         #diagonal izquierda abajo
-        if (not cumple and (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva +1)):
-            for c_neg in range(2,posicion_columna_nueva+1):
-                for [fila,columna] in fichas_propias:
-                    if((columna == posicion_columna_nueva-c_neg) and (fila == posicion_fila_nueva+f_pos)):
-                        cumple = True
-                        break
-                if cumple:
-                    break
+    #este 
+    #pongo la nueva ficha a la izquierda arriba de una ficha contraria
+    elif (columna_ficha_contraria == posicion_columna_nueva+1 and fila_ficha_contraria == posicion_fila_nueva +1):
+        return comprobar_diagonal_abajo_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
+    else:
+        return cumple
+            
+    
 
-         #diagonal derecha abajo
-        if (not cumple and (columna_ficha_contraria == posicion_columna_nueva+1 and fila_ficha_contraria == posicion_fila_nueva +1)):
-            for c_pos in range(2,8-posicion_columna_nueva): 
-                for [fila,columna] in fichas_propias:
-                    if((columna == posicion_columna_nueva+c_pos) and (fila == posicion_fila_nueva+f_pos)):
-                        cumple = True
-                        break
-                if cumple:
-                    break
+#pongo la ficha abajo izquierda
+#SI FUNCIONA
+def comprobar_diagonal_arriba_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
+    cumple = False
+    columna_a_comprobar = posicion_columna_nueva + 2
+    fila_a_comprobar = posicion_fila_nueva -2
+    while (0<=columna_a_comprobar<8 and 0<=fila_a_comprobar<8):
+        if ([fila_a_comprobar,columna_a_comprobar] in fichas_contrarias):
+            columna_a_comprobar +=1
+            fila_a_comprobar -=1
+            continue
+        elif ([fila_a_comprobar,columna_a_comprobar] in fichas_propias):
+            # Si encontramos una del mismo color, la secuencia es válida
+            cumple = True
+            break
+        else:
+            # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
+            break
+    return cumple
+
+#pongo la ficha arriba derecha
+#SI FUNCIONA
+def comprobar_diagonal_abajo_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
+    cumple = False
+    columna_a_comprobar = posicion_columna_nueva - 2
+    fila_a_comprobar = posicion_fila_nueva + 2
+    while (0<=columna_a_comprobar<8 and 0<=fila_a_comprobar<8):
+        if ([fila_a_comprobar,columna_a_comprobar] in fichas_contrarias):
+            columna_a_comprobar -=1
+            fila_a_comprobar +=1
+            continue
+        elif ([fila_a_comprobar,columna_a_comprobar] in fichas_propias):
+            # Si encontramos una del mismo color, la secuencia es válida
+            cumple = True
+            break
+        else:
+            # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
+            break
+    return cumple
+
+#pongo la ficha arriba izquierda
+#SI FUNCIONAAAA
+def comprobar_diagonal_abajo_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
+    cumple = False
+    columna_a_comprobar = posicion_columna_nueva + 2
+    fila_a_comprobar = posicion_fila_nueva + 2
+    while (0<=columna_a_comprobar<8 and 0<=fila_a_comprobar<8):
+        if ([fila_a_comprobar,columna_a_comprobar] in fichas_contrarias):
+            columna_a_comprobar +=1
+            fila_a_comprobar +=1
+            continue
+        elif ([fila_a_comprobar,columna_a_comprobar] in fichas_propias):
+            # Si encontramos una del mismo color, la secuencia es válida
+            cumple = True
+            break
+        else:
+            # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
+            break
+            
+    return cumple
+
+#pongo la ficha, abajo derecha
+#SI FUNCIONAAA
+def comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
+    cumple = False
+    columna_a_comprobar = posicion_columna_nueva - 2
+    fila_a_comprobar = posicion_fila_nueva - 2
+    while (0<=columna_a_comprobar<8 and 0<=fila_a_comprobar<8):
+        if ([fila_a_comprobar,columna_a_comprobar] in fichas_contrarias):
+            columna_a_comprobar -=1
+            fila_a_comprobar -=1
+            continue
+        elif ([fila_a_comprobar,columna_a_comprobar] in fichas_propias):
+            # Si encontramos una del mismo color, la secuencia es válida
+            cumple = True
+            break
+        else:
+            # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
+            break
             
     return cumple
 
