@@ -1,9 +1,5 @@
-import pandas as pd
-import juego_otelo
-import mcts
-import movimientos
-import avance_juego_automatico
 
+"""
 partidas = 1
 
 def partida_ia_vs_ia():
@@ -28,15 +24,15 @@ for i in range(partidas+1):
 
     turno = 1 #se empieza siempre por elturno 1
 
-    tablero = juego_otelo.tablero() #creo un tablero vacío
+    tablero = tablero(ficha_blanca(), ficha_negra()) #creo un tablero vacío
 
     partida_realizada = [] #sirve para ir guardando los estados de la partida para después añadirlos en el csv
 
     while sigue_jugando :
 
         #compruebo si se ha terminado la partida
-        if((len(movimientos.posibles_movimientos(tablero,1)) == 0) and (len(movimientos.posibles_movimientos(tablero,2)) == 0)) :
-            ganador = avance_juego_automatico.ganador(turno)
+        if((len(posibles_movimientos(tablero,1)) == 0) and (len(posibles_movimientos(tablero,2)) == 0)) :
+            ganador = ganador(turno)
             for linea in partida_realizada:
                 if(linea[1] == turno):
                     linea[2] = ganador
@@ -53,18 +49,58 @@ for i in range(partidas+1):
                 df_estados_partidas = pd.concat([df_estados_partidas, pd.DataFrame([linea])], ignore_index=True)
             break
 
-        if len(movimientos.posibles_movimientos(tablero,turno)) == 0 :
+        if len(posibles_movimientos(tablero,turno)) == 0 :
             turno = 3 - turno
             continue
 
         accion_elegida = mcts(tablero,turno)
 
-        avance_juego_automatico.turnos(turno,accion_elegida[0],accion_elegida[1],tablero)
+        turnos(turno,accion_elegida[0],accion_elegida[1],tablero)
 
         #en cada estado, se especifica al principio antes de saber quien es de verdad el ganador, se pone quien va ganando de momento
-        ganador = avance_juego_automatico.ganador(turno)
+        ganador = ganador(turno)
 
         nueva_linea = crear_linea_csv(tablero,turno,ganador)
         partida_realizada.append(nueva_linea)
 
         turno = 3 - turno
+        """
+
+from reglas_juego.avance_juego_automatico import turnos
+from reglas_juego.inicializa_tablero import tablero, ficha_blanca, ficha_negra, mostrar_tablero
+from reglas_juego.movimientos import posibles_movimientos
+from reglas_juego.avance_de_juego import modificar_tablero
+from mcts import mcts  # Asegúrate de importar tu función MCTS correctamente
+
+import time
+
+def partida_ia_vs_ia():
+    estado_tablero = tablero(ficha_blanca(), ficha_negra())
+    turno = 1  # Empieza la ficha blanca (o cambia a 2 si prefieres que empiece negra)
+
+    print("Inicio de la partida IA vs IA")
+    mostrar_tablero(estado_tablero)
+    while True:
+        movimientos = posibles_movimientos(estado_tablero, turno)
+        if not movimientos:
+        # Comprobar si el otro jugador también está bloqueado
+            if not posibles_movimientos(estado_tablero, 3 - turno):
+                break
+            turno = 3 - turno
+            continue
+
+        accion = mcts(estado_tablero, turno)
+        print(f"\nIA con ficha {'⚪' if turno == 2 else '●'} coloca ficha en {accion}")
+        old_tablero = [fila[:] for fila in estado_tablero]  # copia previa para comparar
+        turno, estado_tablero = turnos(turno, accion[0], accion[1], estado_tablero)
+
+        print(f"\nIA con ficha {'⚪' if turno == 2 else '●'} coloca ficha en {accion}")
+        print("ANTES:")
+        mostrar_tablero(old_tablero)
+        print("DESPUÉS:")
+        mostrar_tablero(estado_tablero)
+        time.sleep(1)
+    
+        
+    # Aquí puedes mostrar el resultado final si tienes lógica para contar fichas
+

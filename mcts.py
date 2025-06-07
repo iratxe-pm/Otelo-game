@@ -1,9 +1,9 @@
-from avance_juego_automatico import partida_automática
-import juego_otelo 
+from reglas_juego.inicializa_tablero import mostrar_tablero
+from reglas_juego.movimientos import posibles_movimientos
+from reglas_juego.avance_juego_automatico import partida_automática, turnos
 import math
 import random
-import avance_de_juego
-from copy import deepcopy
+from copy import copy, deepcopy
 #los de ficha negra son los nodos de nivel impar, y lo de blanca se encuentran en el nivel par
 
 """
@@ -19,7 +19,7 @@ class crear_nodo:
         self.padre = padre #el estado anterior
         self.action = action #guarda la accion que hace que lleguen a ese nodo
         self.hijos = [] #guarda los hijos de ese nodo; son los nuevos estados del tablero
-        self.acciones_posibles = juego_otelo.posibles_movimientos(tablero,turno) #aqui guarda las acciones de ese nodo que pueda tomar
+        self.acciones_posibles = posibles_movimientos(tablero,turno) #aqui guarda las acciones de ese nodo que pueda tomar
         self.acciones_hechas = [] #para comprobar si se ha extendido del todo o no el nodo
         #estos dos de abajo sirve para calcular después el UCT 
         self.visitas = 0 #se guarda el numero de veces q se accede a este nodo; al inicio es 0 pq solo se crea no se visita
@@ -29,13 +29,14 @@ class crear_nodo:
 #uct valor de la constante es sqrt(2) pq lo dice q lo hagamos segun un documento a survey of monte carlo tree search methods
 #1000 iteraciones
 #el mcts primero explora todos sus hijos, y luego cuando ya cuando se conozca se explota
-def mcts(tablero,turno,iteraccion = 1000):
+def mcts(tablero,turno,iteraccion = 100):
     raiz = crear_nodo(tablero,turno)
     for i in range(0,iteraccion):
         #se le manda el nodo raiz, porque la selección siempre se empieza por el nodo raí
         nodo_seleccionado = seleccion_nodo_siguiente(raiz)
         partida_simulada = simulacion(nodo_seleccionado)
         retropopagación(partida_simulada, nodo_seleccionado)
+
     return seleccion_hijo_uct(raiz).action
 
 #primera fase del árbol mcts
@@ -45,7 +46,7 @@ def seleccion_nodo_siguiente(nodo):
     #este if es por si cuando se busca el nodo, si la partida se ha acabado, entonces elige ese nodo y no se expande
     #si cumple este if, significa que es un nodo terminal
     #se pone asi porque tiene que comprobar los dos turnos
-    if (len(juego_otelo.posibles_movimientos(nodo.posicion,1)) == 0 and len(juego_otelo.posibles_movimientos(nodo.posicion,2)) == 0):
+    if (len(posibles_movimientos(nodo.posicion,1)) == 0 and len(posibles_movimientos(nodo.posicion,2)) == 0):
         return nodo
     
     #esta es para ver que si se ha expandido; es decir que el nodo se puede expandir mas
@@ -65,12 +66,9 @@ def seleccion_nodo_siguiente(nodo):
 def expandir(nodo):
     for accion in nodo.acciones_posibles:
         if not accion in nodo.acciones_hechas:
-            tablero_copia = deepcopy(nodo.tablero) #para hacer una copia mas profunda y que no se cambie el nodo padre
-            tablero_nuevo = avance_de_juego.turnos(nodo.turno, accion[0], accion[1], tablero_copia)
-            if(nodo.turno == 2):
-                turno = 1
-            else:
-                turno = 2
+            tablero_copia = copy(nodo.posicion)
+            turno, tablero_nuevo = turnos(nodo.turno, accion[0], accion[1], tablero_copia)
+
             nodo_obtenido = crear_nodo(tablero_nuevo,turno,nodo,accion)
             nodo.hijos.append(nodo_obtenido)
             #si la accion no se ha tomado todavía entonces se sigue y se añade a la lista de acciones ya hechas
@@ -79,7 +77,7 @@ def expandir(nodo):
 
 def seleccion_hijo_uct(nodo):
     c = math.sqrt(2)
-    uct_mejor = 0 #al inicio del todo el uct mejor es 0
+    uct_mejor = float("-inf") 
     mejor_hijo = []
 
     for hijo in nodo.hijos:
@@ -106,7 +104,7 @@ def seleccion_hijo_uct(nodo):
 # solo se aplica la similación al nodo que ha sido elegido para expandirse
 # la simulación consiste en simular una partida a partir del estado del tablero en ese momento con movimientos aleatorios
 def simulacion(nodo):
-    resultado = partida_automática(nodo.turno, nodo.tablero)
+    resultado = partida_automática(nodo.turno, nodo.posicion)
     return resultado
 
 #retropropagación
