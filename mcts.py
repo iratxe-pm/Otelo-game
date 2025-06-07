@@ -1,3 +1,4 @@
+from avance_juego_automatico import partida_automática
 import juego_otelo 
 import math
 import random
@@ -33,8 +34,9 @@ def mcts(tablero,turno,iteraccion = 1000):
     for i in range(0,iteraccion):
         #se le manda el nodo raiz, porque la selección siempre se empieza por el nodo raí
         nodo_seleccionado = seleccion_nodo_siguiente(raiz)
-    accion = [0,0]
-    return accion
+        partida_simulada = simulacion(nodo_seleccionado)
+        retropopagación(partida_simulada, nodo_seleccionado)
+    return seleccion_hijo_uct(raiz).action
 
 #primera fase del árbol mcts
 
@@ -98,3 +100,21 @@ def seleccion_hijo_uct(nodo):
     hijo_seleccionado = random.choice(mejor_hijo) 
              
     return hijo_seleccionado
+
+    
+#simulación
+# solo se aplica la similación al nodo que ha sido elegido para expandirse
+# la simulación consiste en simular una partida a partir del estado del tablero en ese momento con movimientos aleatorios
+def simulacion(nodo):
+    resultado = partida_automática(nodo.turno, nodo.tablero)
+    return resultado
+
+#retropropagación
+def retropopagación (partida_simulada, nodo):
+    actual = nodo
+    while actual is not None:
+        actual.visitas += 1
+        actual.recompensa_acomulada += resultado
+        resultado *= -1  # alternar perspectiva para el oponente xq el padre y el hijo tienen turnos opuestos
+        actual = actual.padre #va actualizando todos los anteriores
+
