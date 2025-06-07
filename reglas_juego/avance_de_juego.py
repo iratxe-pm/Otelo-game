@@ -82,18 +82,14 @@ def ganador(turno):
             ganadores(-1)
         print("¡¡¡GANA LAS NEGRAS !!!")
 
-                elif (len(ficha_negra()) < len(ficha_blanca())):
-                    if turno == 1:
-                        ganadores(-1)
-                    else:
-                        ganadores(1)
-                    print("¡¡¡GANA LAS BLANCAS !!!")
-                else:
-                     ganadores(0)
-                     print("¡¡¡EMPATE !!!")
-                break #este break como juego_sigue se pone a false a lo mejor se deberia de quitar, revisar luego 
-            
+    elif (len(ficha_negra()) < len(ficha_blanca())):
+        if turno == 1:
+            ganadores(-1)
+        else:
+            ganadores(1)
+        print("¡¡¡GANA LAS BLANCAS !!!")
+    else:
+            ganadores(0)
+            print("¡¡¡EMPATE !!!")
 
-        except ValueError:
-            print("Por favor ingrese números válidos.")
 
