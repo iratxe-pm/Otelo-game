@@ -82,7 +82,10 @@ def seleccion_hijo_uct(nodo):
     c = math.sqrt(2)
     uct_mejor = float("-inf") 
     mejor_hijo = []
-
+    #revisa esto maria
+    if not nodo.hijos:
+        # No hay hijos, no se puede elegir ninguno, devuelve el nodo actual
+        return nodo
     for hijo in nodo.hijos:
         recompensa = hijo.recompensa_acomulada
         n_visitas = hijo.visitas
