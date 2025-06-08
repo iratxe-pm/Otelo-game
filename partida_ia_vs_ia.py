@@ -92,11 +92,12 @@ def partida_ia_vs_ia():
             continue
 
         accion = mcts(estado.tablero, turno)
-        turno, estado.tablero = turnos(turno, accion[0], accion[1], estado)
+        turno, estado = turnos(turno, accion[0], accion[1], estado)
 
         print(f"\nIA con ficha {'⚪' if turno == 2 else '●'} coloca ficha en {accion}")
         mostrar_tablero(estado.tablero)
         time.sleep(1)
+        
    
     
         

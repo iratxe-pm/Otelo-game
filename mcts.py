@@ -30,9 +30,9 @@ class crear_nodo:
 #uct valor de la constante es sqrt(2) pq lo dice q lo hagamos segun un documento a survey of monte carlo tree search methods
 #1000 iteraciones
 #el mcts primero explora todos sus hijos, y luego cuando ya cuando se conozca se explota
-def mcts(tablero,turno,iteraccion = 1000):
+def mcts(tablero,turno,iteraccion = 100):
     estado_inicial = EstadoJuego()
-    estado_inicial.tablero = deepcopy(tablero)
+    estado_inicial.tablero = copy(tablero)
     raiz = crear_nodo(estado_inicial,turno)
     for i in range(0,iteraccion):
         #se le manda el nodo raiz, porque la selección siempre se empieza por el nodo raí
@@ -56,6 +56,10 @@ def seleccion_nodo_siguiente(nodo):
     if (len(nodo.acciones_posibles) != len(nodo.acciones_hechas)):
         return expandir(nodo)
     
+    # C) Si ya intenté expandir todo y NO hay hijos...
+    if not nodo.hijos:
+        return nodo
+    
     #uct solo se usa cuando el nodo ya ha sido extendido, por lo tanto los hijos del nodo ya se conocen
     hijo_mejor_uct = seleccion_hijo_uct(nodo)
 
@@ -70,9 +74,9 @@ def expandir(nodo):
     for accion in nodo.acciones_posibles:
         if not accion in nodo.acciones_hechas:
             estado_copia = deepcopy(nodo.posicion)
-            turno, _ = turnos(nodo.turno, accion[0], accion[1], estado_copia)
+            _, estado = turnos(nodo.turno, accion[0], accion[1], estado_copia)
 
-            nodo_obtenido = crear_nodo(estado_copia,turno,nodo,accion)
+            nodo_obtenido = crear_nodo(estado,nodo.turno,nodo,accion)
             nodo.hijos.append(nodo_obtenido)
             #si la accion no se ha tomado todavía entonces se sigue y se añade a la lista de acciones ya hechas
             nodo.acciones_hechas.append(accion)
@@ -83,9 +87,6 @@ def seleccion_hijo_uct(nodo):
     uct_mejor = float("-inf") 
     mejor_hijo = []
     #revisa esto maria
-    if not nodo.hijos:
-        # No hay hijos, no se puede elegir ninguno, devuelve el nodo actual
-        return nodo
     for hijo in nodo.hijos:
         recompensa = hijo.recompensa_acomulada
         n_visitas = hijo.visitas
