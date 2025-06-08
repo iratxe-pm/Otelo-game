@@ -67,9 +67,8 @@ for i in range(partidas+1):
         """
 
 from reglas_juego.avance_juego_automatico import turnos
-from reglas_juego.inicializa_tablero import tablero, ficha_blanca, ficha_negra, mostrar_tablero
+from reglas_juego.inicializa_tablero import mostrar_tablero
 from reglas_juego.movimientos import posibles_movimientos
-from reglas_juego.avance_de_juego import modificar_tablero
 from mcts import mcts  # Asegúrate de importar tu función MCTS correctamente
 from reglas_juego.estado_juego import EstadoJuego
 

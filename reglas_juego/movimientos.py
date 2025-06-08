@@ -4,7 +4,6 @@
 #los parametros son turno, para saber si es turno de una blanca o negra
 
 
-from reglas_juego.inicializa_tablero import ficha_blanca, ficha_negra
 
 
 def reglas_de_movimiento(estado,turno, posicion_fila_nueva, posicion_columna_nueva) : 
@@ -243,5 +242,5 @@ def posibles_movimientos(estado, turno):
                             for[fila_b,columna_b] in fichas_blancas:
                                 puede_jugar = comprobar(fichas_negras,fichas_blancas,fila_b,columna_b,fila_tabl,columna_tabl)
                                 if puede_jugar:
-                                    posibles_acciones.append([fila_tabl,columna_tabl])            
+                                    posibles_acciones.append([fila_tabl,columna_tabl])  
     return posibles_acciones

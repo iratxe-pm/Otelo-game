@@ -1,5 +1,4 @@
 ##cambio de color
-from reglas_juego.inicializa_tablero import ficha_blanca, ficha_negra
 
 
 def cambio_de_color_fichas(estado,turno,posicion_fila_ficha,posicion_columna_ficha,tablero):

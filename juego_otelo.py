@@ -1,6 +1,6 @@
+from reglas_juego.avance_juego_automatico import partida_manual, partida_mixta
+from reglas_juego.estado_juego import EstadoJuego
 from partida_ia_vs_ia import partida_ia_vs_ia
-from reglas_juego.avance_de_juego import modificar_tablero
-from reglas_juego.inicializa_tablero import ficha_blanca, ficha_negra, tablero
 
 
 def main():
@@ -17,9 +17,9 @@ if __name__ == "__main__":
     modo = input("Selecciona modo: ")
 
     if(modo == "1"):
-        main()
+        partida_manual(EstadoJuego())
     elif (modo == "2"):
-        modificar_tablero(tablero(ficha_blanca(), ficha_negra()))
+        partida_mixta(EstadoJuego())
     elif (modo == "3"):
         partida_ia_vs_ia()
     else:
