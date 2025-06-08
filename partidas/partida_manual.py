@@ -50,9 +50,9 @@ def partida_manual(estado):
                         turno = 1
 
     print("Juego terminado")
-    if (ganador(turno) == 1):
+    if (ganador(estado,turno) == 1):
           print("GANASTES")
-    elif (ganador(turno) == -1):
+    elif (ganador(estado,turno) == -1):
           print("PERDISTES")
     else:
           print("EMPATE")

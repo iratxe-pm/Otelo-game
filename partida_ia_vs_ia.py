@@ -1,10 +1,11 @@
-from reglas_juego.avance_juego_automatico import turnos, ganador
-from reglas_juego.inicializa_tablero import tablero, ficha_blanca, ficha_negra, mostrar_tablero
+
+import pandas as pd
+
+from reglas_juego.avance_juego import turnos,ganador
+from partidas.mostrar_tablero import mostrar_tablero
 from reglas_juego.movimientos import posibles_movimientos
-from reglas_juego.avance_de_juego import modificar_tablero
 from mcts import mcts  # Asegúrate de importar tu función MCTS correctamente
 from reglas_juego.estado_juego import EstadoJuego
-import pandas as pd
 
 import time
 

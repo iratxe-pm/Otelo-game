@@ -1,8 +1,7 @@
 from partidas.partida_automatica import partida_automática
 from reglas_juego.estado_juego import EstadoJuego
 from reglas_juego.movimientos import posibles_movimientos
-from reglas_juego.avance_juego_automatico import partida_automática, turnos, sincronizar_fichas_desde_tablero
-from reglas_juego.avance_juego import turnos
+from reglas_juego.avance_juego import partida_automática, turnos, sincronizar_fichas_desde_tablero
 import math
 import random
 from copy import deepcopy
@@ -42,7 +41,6 @@ def mcts(tablero,turno,iteraccion = 1):
         nodo_seleccionado = seleccion_nodo_siguiente(raiz)
         partida_simulada = simulacion(nodo_seleccionado)
         retropopagación(partida_simulada, nodo_seleccionado)
-        print("acciones posibles",raiz.acciones_posibles)
 
     return seleccion_hijo_uct(raiz).action
 
