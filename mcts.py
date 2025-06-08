@@ -30,7 +30,7 @@ class crear_nodo:
 #uct valor de la constante es sqrt(2) pq lo dice q lo hagamos segun un documento a survey of monte carlo tree search methods
 #1000 iteraciones
 #el mcts primero explora todos sus hijos, y luego cuando ya cuando se conozca se explota
-def mcts(tablero,turno,iteraccion = 1):
+def mcts(tablero,turno,iteraccion = 100):
     estado_inicial = EstadoJuego()
     estado_inicial.tablero = deepcopy(tablero)
     sincronizar_fichas_desde_tablero(estado_inicial)  # Sincronizamos fichas con tablero
@@ -72,6 +72,7 @@ def seleccion_nodo_siguiente(nodo):
 def expandir(nodo):
     for accion in nodo.acciones_posibles:
         if accion not in nodo.acciones_hechas:
+            print("accion elegida",accion)
             estado_copia = deepcopy(nodo.posicion)
             turno_siguiente, estado_nuevo = turnos(nodo.turno, accion[0], accion[1], estado_copia)
             nodo_obtenido = crear_nodo(estado_nuevo, turno_siguiente, nodo, accion)

@@ -43,23 +43,24 @@ def partida_automática(turno_llega, estado):
     turno = turno_llega
     
     while contador_salta_turno < 2 and not estado.is_terminal():
-
-
-            movimientos = posibles_movimientos(estado,turno_llega)
+        movimientos = posibles_movimientos(estado, turno)
+        
+        if movimientos:
+            accion_seleccionada = random.choice(movimientos)
+            try:
+                turno, estado = turnos(turno, accion_seleccionada[0], accion_seleccionada[1], estado)
+            except MovimientoInvalidoError:
+                # Opcional: imprimir info para debug
+                print(f"Movimiento inválido en partida automática: turno {turno}, acción {accion_seleccionada}")
+                # Puedes decidir si romper, continuar, o salir
+                break
+            contador_salta_turno = 0  # Reinicia si hubo movimiento válido
+        else:
+            contador_salta_turno += 1
+            turno = 2 if turno == 1 else 1  # Cambia turno correctamente
             
-            if (len(movimientos) != 0):
-                accion_seleccionada = random.choice(movimientos)
-                turno,estado = turnos(turno_llega, accion_seleccionada[0], accion_seleccionada[1], estado)  
+    return ganador(estado, turno)
 
-            
-            else:
-                contador_salta_turno +=1
-                if turno_llega == 1:
-                    turno = 2
-                else: 
-                    turno = 1
-
-    return ganador(estado,turno)
 
 def ganador(estado, turno):
     if (len(estado.ficha_negra()) > len(estado.ficha_blanca())):
