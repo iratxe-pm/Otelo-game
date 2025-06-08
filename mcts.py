@@ -32,7 +32,7 @@ class crear_nodo:
 #el mcts primero explora todos sus hijos, y luego cuando ya cuando se conozca se explota
 def mcts(tablero,turno,iteraccion = 100):
     estado_inicial = EstadoJuego()
-    estado_inicial.tablero = copy(tablero)
+    estado_inicial.tablero = deepcopy(tablero)
     raiz = crear_nodo(estado_inicial,turno)
     for i in range(0,iteraccion):
         #se le manda el nodo raiz, porque la selección siempre se empieza por el nodo raí
@@ -74,9 +74,9 @@ def expandir(nodo):
     for accion in nodo.acciones_posibles:
         if not accion in nodo.acciones_hechas:
             estado_copia = deepcopy(nodo.posicion)
-            _, estado = turnos(nodo.turno, accion[0], accion[1], estado_copia)
+            turno_siguiente, estado_nuevo = turnos(nodo.turno, accion[0], accion[1], estado_copia)
 
-            nodo_obtenido = crear_nodo(estado,nodo.turno,nodo,accion)
+            nodo_obtenido = crear_nodo(estado_nuevo, turno_siguiente, nodo, accion)
             nodo.hijos.append(nodo_obtenido)
             #si la accion no se ha tomado todavía entonces se sigue y se añade a la lista de acciones ya hechas
             nodo.acciones_hechas.append(accion)

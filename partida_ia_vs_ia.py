@@ -74,31 +74,38 @@ from mcts import mcts  # Asegúrate de importar tu función MCTS correctamente
 from reglas_juego.estado_juego import EstadoJuego
 
 import time
-
 def partida_ia_vs_ia():
     estado = EstadoJuego()
-    estado.tablero = tablero(ficha_blanca(), ficha_negra())    
-    turno = 1  # Empieza la ficha blanca (o cambia a 2 si prefieres que empiece negra)
+    estado.tablero = tablero(ficha_blanca(), ficha_negra())
 
+    turno = 1   # Empieza la negra (1) o la blanca (2), elige uno
     print("Inicio de la partida IA vs IA")
     mostrar_tablero(estado.tablero)
+
     while True:
+        # 1) CONSEGUIR movimientos con el nombre CORRECTO:
         movimientos = posibles_movimientos(estado, turno)
         if not movimientos:
-        # Comprobar si el otro jugador también está bloqueado
-            if not posibles_movimientos(estado, 3 - turno):
-                break
+            if(turno == 1):
+            # 1a) ni tú ni el oponente pueden mover → fin
+                if not posibles_movimientos(estado, 3 - turno):
+                    break
+            # 1b) solo tú no puedes → pasa el turno
             turno = 3 - turno
             continue
-
-        accion = mcts(estado.tablero, turno)
-        turno, estado = turnos(turno, accion[0], accion[1], estado)
-
-        print(f"\nIA con turno {turno} coloca ficha en {accion}")
-        mostrar_tablero(estado.tablero)
-        time.sleep(1)
         
-   
-    
-        
+        else:
+            print("el turno es", turno)
+            # 2) pides jugada a MCTS
+            accion = mcts(estado.tablero, turno)
 
+            # 3) guardas antes quién mueve
+            jugador_actual = turno
+            print(f"\nIA con ficha {'●' if jugador_actual==1 else '⚪'} coloca en {accion}")
+
+            # 4) aplicas la jugada
+            turno, estado = turnos(jugador_actual, accion[0], accion[1], estado)
+
+            # 5) muestras el nuevo tablero
+            mostrar_tablero(estado.tablero)
+            time.sleep(1)
