@@ -34,6 +34,7 @@ def modificar_tablero(tablero):
                     if not (tablero[new_fila][new_columna] == 0):
                         print("Posición inválida. En esa posición ya se encuentra una ficha.")
                         continue
+                    
                     turno = turnos(turno, new_fila, new_columna, tablero)   
                 
                 else:
