@@ -34,16 +34,13 @@ def turnos(turno_llega, new_fila, new_columna, estado):
 
 def partida_automática(turno_llega, estado):
     contador_salta_turno = 0
-    juego_sigue = True
     
-    while juego_sigue:
+    while contador_salta_turno<2:
 
-        if(contador_salta_turno<2):
-                movimientos = posibles_movimientos(estado,turno_llega)
+                movimientos = posibles_movimientos(estado,turno)
                 if (len(movimientos) != 0):
                     accion_seleccionada = random.choice(movimientos)
-                    #solo interesa turno
-                    turno, _ = turnos(turno_llega, accion_seleccionada[0], accion_seleccionada[1], estado)   
+                    turno = turnos(turno, accion_seleccionada[0], accion_seleccionada[1], estado)[0]   
                 
                 else:
                     contador_salta_turno +=1
@@ -52,9 +49,7 @@ def partida_automática(turno_llega, estado):
                     else: 
                         turno = 1
 
-        else:
-            juego_sigue = False
-            return ganador(estado,turno_llega)
+    return ganador(estado,turno)
 
 def ganador(estado, turno):
     if (len(estado.ficha_negra()) > len(estado.ficha_blanca())):
