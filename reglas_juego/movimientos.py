@@ -4,7 +4,6 @@
 #los parametros son turno, para saber si es turno de una blanca o negra
 
 
-from reglas_juego.inicializa_tablero import ficha_blanca, ficha_negra
 
 
 def reglas_de_movimiento(estado,turno, posicion_fila_nueva, posicion_columna_nueva) : 

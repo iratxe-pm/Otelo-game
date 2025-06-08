@@ -1,11 +1,8 @@
 #Se encarga de actualizar la posición de las piezas en el tablero a medida que avanza el juego
-from copy import copy, deepcopy
-import random
 from reglas_juego.excepciones import JugadorInvalidoError, MovimientoInvalidoError
-from reglas_juego.estado_juego import EstadoJuego
 from reglas_juego.cambio_fichas import cambio_de_color_fichas
-from reglas_juego.inicializa_tablero import ficha_blanca, ganadores, ficha_negra, mostrar_tablero
-from reglas_juego.movimientos import posibles_movimientos, reglas_de_movimiento
+from reglas_juego.movimientos import reglas_de_movimiento,posibles_movimientos 
+import random
 
 def turnos(turno_llega, new_fila, new_columna, estado):
             #comprueba que si las reglas se cumplen, entonces se produzca el cambio en el tablero
@@ -78,4 +75,5 @@ def ganador(estado, turno):
             return 1
     else:
         return 0          
+
 
