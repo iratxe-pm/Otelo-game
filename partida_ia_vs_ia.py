@@ -83,10 +83,10 @@ def partida_ia_vs_ia():
     print("Inicio de la partida IA vs IA")
     mostrar_tablero(estado.tablero)
     while True:
-        movimientos = posibles_movimientos(estado.tablero, turno)
+        movimientos = posibles_movimientos(estado, turno)
         if not movimientos:
         # Comprobar si el otro jugador también está bloqueado
-            if not posibles_movimientos(estado.tablero, 3 - turno):
+            if not posibles_movimientos(estado, 3 - turno):
                 break
             turno = 3 - turno
             continue
@@ -97,6 +97,7 @@ def partida_ia_vs_ia():
         print(f"\nIA con ficha {'⚪' if turno == 2 else '●'} coloca ficha en {accion}")
         mostrar_tablero(estado.tablero)
         time.sleep(1)
+   
     
         
 

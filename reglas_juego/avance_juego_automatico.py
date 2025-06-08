@@ -8,7 +8,7 @@ from reglas_juego.movimientos import posibles_movimientos, reglas_de_movimiento
 
 def turnos(turno, new_fila, new_columna, estado):
             #comprueba que si las reglas se cumplen, entonces se produzca el cambio en el tablero
-            if(reglas_de_movimiento(turno,new_fila,new_columna)):
+            if(reglas_de_movimiento(estado,turno,new_fila,new_columna)):
                 cambio_de_color_fichas(turno,new_fila,new_columna,estado.tablero)
                 if turno == 1: #turno de las negras
                     estado.tablero[new_fila][new_columna] = 2  # Ficha negra
@@ -32,7 +32,7 @@ def partida_automática(turno, estado):
     while juego_sigue:
 
         if(contador_salta_turno<2):
-                movimientos = posibles_movimientos(estado.tablero,turno)
+                movimientos = posibles_movimientos(estado,turno)
                 if (len(movimientos) != 0):
                     accion_seleccionada = random.choice(movimientos)
                     #solo interesa turno

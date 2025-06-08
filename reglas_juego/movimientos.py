@@ -7,25 +7,25 @@
 from reglas_juego.inicializa_tablero import ficha_blanca, ficha_negra
 
 
-def reglas_de_movimiento(turno, posicion_fila_nueva, posicion_columna_nueva) : 
+def reglas_de_movimiento(estado,turno, posicion_fila_nueva, posicion_columna_nueva) : 
     if(turno == 1):
         ficha = "negra"
-        cumple_con_las_reglas = comprobar_coordenadas_alrededor(ficha,posicion_fila_nueva,posicion_columna_nueva)
+        cumple_con_las_reglas = comprobar_coordenadas_alrededor(estado,ficha,posicion_fila_nueva,posicion_columna_nueva)
     else:
         ficha = "blanca"
-        cumple_con_las_reglas = comprobar_coordenadas_alrededor(ficha,posicion_fila_nueva,posicion_columna_nueva)
+        cumple_con_las_reglas = comprobar_coordenadas_alrededor(estado,ficha,posicion_fila_nueva,posicion_columna_nueva)
     return cumple_con_las_reglas
 
 
 #para comprobar q hay coordenadas al rededor de la ficha válidas
-def comprobar_coordenadas_alrededor(ficha,posicion_fila_nueva,posicion_columna_nueva):
+def comprobar_coordenadas_alrededor(estado,ficha,posicion_fila_nueva,posicion_columna_nueva):
     cumple = False
     if ficha == "negra":
-        fichas_contrarias = ficha_blanca()
-        fichas_propias = ficha_negra()
+        fichas_contrarias = estado.ficha_blanca()
+        fichas_propias = estado.ficha_negra()
     else:
-        fichas_contrarias = ficha_negra()
-        fichas_propias = ficha_blanca()
+        fichas_contrarias = estado.ficha_negra()
+        fichas_propias = estado.ficha_blanca()
         
     for [fila,columna] in fichas_contrarias :
         cumple = comprobar(fichas_propias,fichas_contrarias,fila,columna,posicion_fila_nueva,posicion_columna_nueva)
@@ -218,16 +218,16 @@ def comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicio
     return cumple
 
 #devuelve true si puede jugar
-def posibles_movimientos(tablero, turno):
+def posibles_movimientos(estado, turno):
     posibles_acciones = []
     if (turno == 1):
         ficha_actual = "negra"
     else:
         ficha_actual = "blanca"
 
-    fichas_blancas = ficha_blanca()
-    fichas_negras = ficha_negra()
-
+    fichas_blancas = estado.ficha_blanca()
+    fichas_negras = estado.ficha_negra()
+    tablero = estado.tablero
     if (len(fichas_blancas) + len(fichas_negras)<64):
         for fila_tabl in range(8):
             for columna_tabl in range(8):
