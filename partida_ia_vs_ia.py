@@ -66,8 +66,8 @@ for i in range(partidas+1):
         turno = 3 - turno
         """
 
-from reglas_juego.avance_juego_automatico import turnos
-from reglas_juego.inicializa_tablero import mostrar_tablero
+from reglas_juego.avance_juego import turnos
+from partidas.mostrar_tablero import mostrar_tablero
 from reglas_juego.movimientos import posibles_movimientos
 from mcts import mcts  # Asegúrate de importar tu función MCTS correctamente
 from reglas_juego.estado_juego import EstadoJuego
@@ -76,7 +76,6 @@ import time
 
 def partida_ia_vs_ia():
     estado = EstadoJuego()
-    estado.tablero = tablero(ficha_blanca(), ficha_negra())    
     turno = 1  # Empieza la ficha blanca (o cambia a 2 si prefieres que empiece negra)
 
     print("Inicio de la partida IA vs IA")

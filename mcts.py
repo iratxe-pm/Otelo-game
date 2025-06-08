@@ -1,10 +1,10 @@
+from partidas.partida_automatica import partida_automática
 from reglas_juego.estado_juego import EstadoJuego
-from reglas_juego.inicializa_tablero import mostrar_tablero
 from reglas_juego.movimientos import posibles_movimientos
-from reglas_juego.avance_juego_automatico import partida_automática, turnos
+from reglas_juego.avance_juego import turnos
 import math
 import random
-from copy import copy, deepcopy
+from copy import deepcopy
 #los de ficha negra son los nodos de nivel impar, y lo de blanca se encuentran en el nivel par
 
 """

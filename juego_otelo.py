@@ -1,4 +1,5 @@
-from reglas_juego.avance_juego_automatico import partida_manual, partida_mixta
+from partidas.partida_manual import partida_manual
+from partidas.partida_mixta import partida_mixta
 from reglas_juego.estado_juego import EstadoJuego
 from partida_ia_vs_ia import partida_ia_vs_ia
 
