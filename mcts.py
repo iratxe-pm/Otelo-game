@@ -1,3 +1,4 @@
+from reglas_juego.estado_juego import EstadoJuego
 from reglas_juego.inicializa_tablero import mostrar_tablero
 from reglas_juego.movimientos import posibles_movimientos
 from reglas_juego.avance_juego_automatico import partida_automática, turnos
@@ -13,13 +14,13 @@ se crea un árbol y por cada nodo que se accede; al principio uno de los hijos d
 
 
 class crear_nodo:
-    def __init__ (self, tablero, turno, padre= None, action= None):
-        self.posicion = tablero #guarda la posicion del tablero,  con la accion action ya implicada
+    def __init__ (self, estado, turno, padre= None, action= None):
+        self.posicion = estado #guarda la posicion del tablero,  con la accion action ya implicada
         self.turno = turno #guarda el turno de este estado en concreto
         self.padre = padre #el estado anterior
         self.action = action #guarda la accion que hace que lleguen a ese nodo
         self.hijos = [] #guarda los hijos de ese nodo; son los nuevos estados del tablero
-        self.acciones_posibles = posibles_movimientos(tablero,turno) #aqui guarda las acciones de ese nodo que pueda tomar
+        self.acciones_posibles = posibles_movimientos(estado.tablero,turno) #aqui guarda las acciones de ese nodo que pueda tomar
         self.acciones_hechas = [] #para comprobar si se ha extendido del todo o no el nodo
         #estos dos de abajo sirve para calcular después el UCT 
         self.visitas = 0 #se guarda el numero de veces q se accede a este nodo; al inicio es 0 pq solo se crea no se visita
@@ -30,7 +31,9 @@ class crear_nodo:
 #1000 iteraciones
 #el mcts primero explora todos sus hijos, y luego cuando ya cuando se conozca se explota
 def mcts(tablero,turno,iteraccion = 100):
-    raiz = crear_nodo(tablero,turno)
+    estado_inicial = EstadoJuego()
+    estado_inicial.tablero = deepcopy(tablero)
+    raiz = crear_nodo(estado_inicial,turno)
     for i in range(0,iteraccion):
         #se le manda el nodo raiz, porque la selección siempre se empieza por el nodo raí
         nodo_seleccionado = seleccion_nodo_siguiente(raiz)
@@ -46,7 +49,7 @@ def seleccion_nodo_siguiente(nodo):
     #este if es por si cuando se busca el nodo, si la partida se ha acabado, entonces elige ese nodo y no se expande
     #si cumple este if, significa que es un nodo terminal
     #se pone asi porque tiene que comprobar los dos turnos
-    if (len(posibles_movimientos(nodo.posicion,1)) == 0 and len(posibles_movimientos(nodo.posicion,2)) == 0):
+    if (len(posibles_movimientos(nodo.posicion.tablero,1)) == 0 and len(posibles_movimientos(nodo.posicion.tablero,2)) == 0):
         return nodo
     
     #esta es para ver que si se ha expandido; es decir que el nodo se puede expandir mas
@@ -66,10 +69,10 @@ def seleccion_nodo_siguiente(nodo):
 def expandir(nodo):
     for accion in nodo.acciones_posibles:
         if not accion in nodo.acciones_hechas:
-            tablero_copia = copy(nodo.posicion)
-            turno, tablero_nuevo = turnos(nodo.turno, accion[0], accion[1], tablero_copia)
+            estado_copia = deepcopy(nodo.posicion)
+            turno, _ = turnos(nodo.turno, accion[0], accion[1], estado_copia)
 
-            nodo_obtenido = crear_nodo(tablero_nuevo,turno,nodo,accion)
+            nodo_obtenido = crear_nodo(estado_copia,turno,nodo,accion)
             nodo.hijos.append(nodo_obtenido)
             #si la accion no se ha tomado todavía entonces se sigue y se añade a la lista de acciones ya hechas
             nodo.acciones_hechas.append(accion)

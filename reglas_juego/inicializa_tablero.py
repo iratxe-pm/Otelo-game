@@ -19,8 +19,8 @@ def ficha_blanca (extra = None):
 lista_ganadores=  []
 def ganadores (extra = None):
     if extra:
-        lista_ganadores.append(extra)
-    return lista_ganadores
+        ganadores.append(extra)
+    return ganadores
 
 
 #Se encarga de mostrar el tablero y las fichas

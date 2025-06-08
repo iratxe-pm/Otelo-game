@@ -71,36 +71,32 @@ from reglas_juego.inicializa_tablero import tablero, ficha_blanca, ficha_negra, 
 from reglas_juego.movimientos import posibles_movimientos
 from reglas_juego.avance_de_juego import modificar_tablero
 from mcts import mcts  # Asegúrate de importar tu función MCTS correctamente
+from reglas_juego.estado_juego import EstadoJuego
 
 import time
 
 def partida_ia_vs_ia():
-    estado_tablero = tablero(ficha_blanca(), ficha_negra())
+    estado = EstadoJuego()
+    estado.tablero = tablero(ficha_blanca(), ficha_negra())    
     turno = 1  # Empieza la ficha blanca (o cambia a 2 si prefieres que empiece negra)
 
     print("Inicio de la partida IA vs IA")
-    mostrar_tablero(estado_tablero)
+    mostrar_tablero(estado.tablero)
     while True:
-        movimientos = posibles_movimientos(estado_tablero, turno)
+        movimientos = posibles_movimientos(estado.tablero, turno)
         if not movimientos:
         # Comprobar si el otro jugador también está bloqueado
-            if not posibles_movimientos(estado_tablero, 3 - turno):
+            if not posibles_movimientos(estado.tablero, 3 - turno):
                 break
             turno = 3 - turno
             continue
 
-        accion = mcts(estado_tablero, turno)
-        print(f"\nIA con ficha {'⚪' if turno == 2 else '●'} coloca ficha en {accion}")
-        old_tablero = [fila[:] for fila in estado_tablero]  # copia previa para comparar
-        turno, estado_tablero = turnos(turno, accion[0], accion[1], estado_tablero)
+        accion = mcts(estado.tablero, turno)
+        turno, estado.tablero = turnos(turno, accion[0], accion[1], estado)
 
         print(f"\nIA con ficha {'⚪' if turno == 2 else '●'} coloca ficha en {accion}")
-        print("ANTES:")
-        mostrar_tablero(old_tablero)
-        print("DESPUÉS:")
-        mostrar_tablero(estado_tablero)
+        mostrar_tablero(estado.tablero)
         time.sleep(1)
     
         
-    # Aquí puedes mostrar el resultado final si tienes lógica para contar fichas
 
