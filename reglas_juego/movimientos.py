@@ -217,7 +217,7 @@ def comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicio
             
     return cumple
 
-#devuelve true si puede jugar
+
 def posibles_movimientos(estado, turno):
     posibles_acciones = []
     if (turno == 1):
@@ -237,11 +237,13 @@ def posibles_movimientos(estado, turno):
                             for[fila_n, columna_n] in fichas_negras:
                                 puede_jugar = comprobar(fichas_blancas,fichas_negras,fila_n,columna_n,fila_tabl,columna_tabl)
                                 if puede_jugar:  
-                                    posibles_acciones.append([fila_tabl,columna_tabl])
+                                    if not [fila_tabl,columna_tabl] in posibles_acciones:
+                                        posibles_acciones.append([fila_tabl,columna_tabl])
                     else:
                         if(len(fichas_blancas)>0):
                             for[fila_b,columna_b] in fichas_blancas:
                                 puede_jugar = comprobar(fichas_negras,fichas_blancas,fila_b,columna_b,fila_tabl,columna_tabl)
                                 if puede_jugar:
-                                    posibles_acciones.append([fila_tabl,columna_tabl])            
+                                    if not [fila_tabl,columna_tabl] in posibles_acciones:
+                                        posibles_acciones.append([fila_tabl,columna_tabl])           
     return posibles_acciones

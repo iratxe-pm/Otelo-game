@@ -2,22 +2,26 @@
 from reglas_juego.inicializa_tablero import ficha_blanca, ficha_negra
 
 
-def cambio_de_color_fichas(estado,turno,posicion_fila_ficha,posicion_columna_ficha,tablero):
-    if(turno == 2):
-        ficha_propia ="blanca"
-        negras = obtener_fichas_cambiar(estado,ficha_propia,posicion_fila_ficha,posicion_columna_ficha)
-        for n in negras:
-            estado.fichas_blancas.append(n)
-            estado.fichas_negras.remove(n)
-            tablero[n[0]][n[1]] = 1
-
+def cambio_de_color_fichas(estado, turno, fila, columna):
+    if turno == 2:
+        ficha_propia = "blanca"
+        fichas_a_cambiar = obtener_fichas_cambiar(estado, ficha_propia, fila, columna)
+        for pos in fichas_a_cambiar:
+            if pos not in estado.fichas_blancas:
+                estado.fichas_blancas.append(pos)
+            if pos in estado.fichas_negras:
+                estado.fichas_negras.remove(pos)
+            estado.tablero[pos[0]][pos[1]] = 1  # Blanca
     else:
-        ficha_propia ="negra"
-        blancas = obtener_fichas_cambiar(estado,ficha_propia,posicion_fila_ficha,posicion_columna_ficha)
-        for n in blancas:
-            estado.fichas_blancas.remove(n)
-            estado.fichas_negras.append(n)
-            tablero[n[0]][n[1]] = 2
+        ficha_propia = "negra"
+        fichas_a_cambiar = obtener_fichas_cambiar(estado, ficha_propia, fila, columna)
+        for pos in fichas_a_cambiar:
+            if pos not in estado.fichas_negras:
+                estado.fichas_negras.append(pos)
+            if pos in estado.fichas_blancas:
+                estado.fichas_blancas.remove(pos)
+            estado.tablero[pos[0]][pos[1]] = 2  # Negra
+
 
 #se le manda la ficha a cambiar, en la posicion que se quiere cambiar
 def obtener_fichas_cambiar(estado,ficha_propia,posicion_fila_ficha,posicion_columna_ficha):

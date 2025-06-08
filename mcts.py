@@ -1,7 +1,7 @@
 from reglas_juego.estado_juego import EstadoJuego
 from reglas_juego.inicializa_tablero import mostrar_tablero
 from reglas_juego.movimientos import posibles_movimientos
-from reglas_juego.avance_juego_automatico import partida_automática, turnos
+from reglas_juego.avance_juego_automatico import partida_automática, turnos, sincronizar_fichas_desde_tablero
 import math
 import random
 from copy import copy, deepcopy
@@ -30,15 +30,18 @@ class crear_nodo:
 #uct valor de la constante es sqrt(2) pq lo dice q lo hagamos segun un documento a survey of monte carlo tree search methods
 #1000 iteraciones
 #el mcts primero explora todos sus hijos, y luego cuando ya cuando se conozca se explota
-def mcts(tablero,turno,iteraccion = 100):
+def mcts(tablero,turno,iteraccion = 1):
     estado_inicial = EstadoJuego()
     estado_inicial.tablero = deepcopy(tablero)
+    sincronizar_fichas_desde_tablero(estado_inicial)  # Sincronizamos fichas con tablero
+    
     raiz = crear_nodo(estado_inicial,turno)
     for i in range(0,iteraccion):
         #se le manda el nodo raiz, porque la selección siempre se empieza por el nodo raí
         nodo_seleccionado = seleccion_nodo_siguiente(raiz)
         partida_simulada = simulacion(nodo_seleccionado)
         retropopagación(partida_simulada, nodo_seleccionado)
+        print("acciones posibles",raiz.acciones_posibles)
 
     return seleccion_hijo_uct(raiz).action
 
@@ -56,9 +59,6 @@ def seleccion_nodo_siguiente(nodo):
     if (len(nodo.acciones_posibles) != len(nodo.acciones_hechas)):
         return expandir(nodo)
     
-    # C) Si ya intenté expandir todo y NO hay hijos...
-    if not nodo.hijos:
-        return nodo
     
     #uct solo se usa cuando el nodo ya ha sido extendido, por lo tanto los hijos del nodo ya se conocen
     hijo_mejor_uct = seleccion_hijo_uct(nodo)
@@ -72,21 +72,21 @@ def seleccion_nodo_siguiente(nodo):
 
 def expandir(nodo):
     for accion in nodo.acciones_posibles:
-        if not accion in nodo.acciones_hechas:
+        if accion not in nodo.acciones_hechas:
             estado_copia = deepcopy(nodo.posicion)
             turno_siguiente, estado_nuevo = turnos(nodo.turno, accion[0], accion[1], estado_copia)
-
             nodo_obtenido = crear_nodo(estado_nuevo, turno_siguiente, nodo, accion)
             nodo.hijos.append(nodo_obtenido)
-            #si la accion no se ha tomado todavía entonces se sigue y se añade a la lista de acciones ya hechas
             nodo.acciones_hechas.append(accion)
             return nodo_obtenido
+    # Si ya se expandió todo, devuelve el nodo actual para evitar None
+    return nodo
+
 
 def seleccion_hijo_uct(nodo):
     c = math.sqrt(2)
     uct_mejor = float("-inf") 
     mejor_hijo = []
-    #revisa esto maria
     for hijo in nodo.hijos:
         recompensa = hijo.recompensa_acomulada
         n_visitas = hijo.visitas

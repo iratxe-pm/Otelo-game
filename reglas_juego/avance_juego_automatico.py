@@ -10,7 +10,7 @@ from reglas_juego.movimientos import posibles_movimientos, reglas_de_movimiento
 def turnos(turno_llega, new_fila, new_columna, estado):
             #comprueba que si las reglas se cumplen, entonces se produzca el cambio en el tablero
             if(reglas_de_movimiento(estado,turno_llega,new_fila,new_columna)):
-                cambio_de_color_fichas(estado,turno_llega,new_fila,new_columna,estado.tablero)
+                cambio_de_color_fichas(estado,turno_llega,new_fila,new_columna)
                 if turno_llega == 1: #turno de las negras
                     estado.tablero[new_fila][new_columna] = 2  # Ficha negra
                     estado.ficha_negra([new_fila,new_columna])
@@ -30,24 +30,37 @@ def turnos(turno_llega, new_fila, new_columna, estado):
 
             return turno, estado
 
+def sincronizar_fichas_desde_tablero(estado):
+    estado.fichas_blancas = []
+    estado.fichas_negras = []
+    for fila in range(8):
+        for col in range(8):
+            if estado.tablero[fila][col] == 1:
+                estado.fichas_blancas.append([fila, col])
+            elif estado.tablero[fila][col] == 2:
+                estado.fichas_negras.append([fila, col])
 
 
 def partida_automática(turno_llega, estado):
     contador_salta_turno = 0
+    turno = turno_llega
     
-    while contador_salta_turno<2:
+    while contador_salta_turno < 2 and not estado.is_terminal():
 
-                movimientos = posibles_movimientos(estado,turno)
-                if (len(movimientos) != 0):
-                    accion_seleccionada = random.choice(movimientos)
-                    turno = turnos(turno, accion_seleccionada[0], accion_seleccionada[1], estado)[0]   
-                
-                else:
-                    contador_salta_turno +=1
-                    if turno_llega == 1:
-                        turno = 2
-                    else: 
-                        turno = 1
+
+            movimientos = posibles_movimientos(estado,turno_llega)
+            
+            if (len(movimientos) != 0):
+                accion_seleccionada = random.choice(movimientos)
+                turno,estado = turnos(turno_llega, accion_seleccionada[0], accion_seleccionada[1], estado)  
+
+            
+            else:
+                contador_salta_turno +=1
+                if turno_llega == 1:
+                    turno = 2
+                else: 
+                    turno = 1
 
     return ganador(estado,turno)
 
