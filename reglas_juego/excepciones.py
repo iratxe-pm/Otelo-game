@@ -47,3 +47,20 @@ def validar_entrada_numerica(entrada):
     if not entrada.isdigit():
         raise EntradaNoNumericaError(entrada)
     return int(entrada)
+
+
+class ValorFueraDeRango(Exception):
+    def __init__(self, valor, minimo, maximo):
+        super().__init__(f"El valor {valor} no está entre {minimo} y {maximo}")
+
+def verificar_valor_en_rango(valor, minimo, maximo):
+    if not (minimo <= valor <= maximo):
+        raise ValorFueraDeRango(valor, minimo, maximo)
+    
+class PosicionOcupada(Exception):
+    def __init__(self, fila, columna):
+        super().__init__(f"La posición ({fila},{columna}) ya está ocupada en el tablero por otra ficha")
+
+def verificar_poosicion_en_tablero(fila, columna, tablero):
+    if tablero[fila][columna] != 0:
+        raise PosicionOcupada(fila, columna)

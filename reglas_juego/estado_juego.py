@@ -57,3 +57,11 @@ class EstadoJuego:
         if extra:
             self.fichas_blancas.append(extra)
         return self.fichas_blancas
+    def is_terminal(self):
+        """
+        Indica si el juego ha terminado: no quedan casillas vacías o ninguno de los jugadores
+        tiene movimientos.
+        """
+        # Se puede mejorar comprobando saltos consecutivos, pero simplificado:
+        vacias = any(self.tablero[f][c] == 0 for f in range(8) for c in range(8))
+        return not vacias

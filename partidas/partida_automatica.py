@@ -60,11 +60,13 @@ def partida_automática(estado):
         time.sleep(1)
 
     print("Juego terminado")
-    if (ganador(estado,turno) == 1):
-          print("GANASTES")
-    elif (ganador(estado,turno) == -1):
-          print("PERDISTES")
+    equipo = "Negras" if turno == 1 else "Blancas"
+
+    if ganador(estado, turno) == 1:
+        print(f"LAS {equipo} GANAN")
+    elif ganador(estado, turno) == -1:
+        print(f"LAS {equipo} PIERDEN")
     else:
-          print("EMPATE")
+        print("EMPATE")
             
    
