@@ -38,7 +38,7 @@ def sincronizar_fichas_desde_tablero(estado):
                 estado.fichas_negras.append([fila, col])
 
 
-def partida_automática(turno_llega, estado):
+def partida_simulada(turno_llega, estado):
     contador_salta_turno = 0
     turno = turno_llega
     

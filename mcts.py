@@ -1,7 +1,6 @@
-from partidas.partida_automatica import partida_automática
 from reglas_juego.estado_juego import EstadoJuego
 from reglas_juego.movimientos import posibles_movimientos
-from reglas_juego.avance_juego import partida_automática, turnos, sincronizar_fichas_desde_tablero
+from reglas_juego.avance_juego import partida_simulada, turnos, sincronizar_fichas_desde_tablero
 import math
 import random
 from copy import deepcopy
@@ -110,7 +109,7 @@ def seleccion_hijo_uct(nodo):
 # solo se aplica la similación al nodo que ha sido elegido para expandirse
 # la simulación consiste en simular una partida a partir del estado del tablero en ese momento con movimientos aleatorios
 def simulacion(nodo):
-    resultado = partida_automática(nodo.turno, nodo.posicion)
+    resultado = partida_simulada(nodo.turno, nodo.posicion)
     return resultado
 
 #retropropagación

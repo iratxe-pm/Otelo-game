@@ -1,3 +1,4 @@
+from partidas.partida_automatica import partida_automática
 from partidas.partida_manual import partida_manual
 from partidas.partida_mixta import partida_mixta
 from reglas_juego.estado_juego import EstadoJuego
@@ -22,7 +23,8 @@ if __name__ == "__main__":
     elif (modo == "2"):
         partida_mixta(EstadoJuego())
     elif (modo == "3"):
-        partida_ia_vs_ia()
+        #partida_ia_vs_ia() # ejecutar SOLO para crear csv
+        partida_automática(EstadoJuego()) #ejecutar pa ver flujo
     else:
         print("Incorrecto, tienes que elegir entre 1,2 y 3.")
     
