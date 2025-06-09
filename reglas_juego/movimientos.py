@@ -218,6 +218,22 @@ def comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicio
 
 
 def posibles_movimientos(estado, turno):
+    """
+    Calcula las posiciones válidas donde el jugador actual puede colocar una ficha.
+
+    Recorre todas las casillas del tablero y selecciona aquellas que:
+      1. Están vacías.
+      2. Aún existen fichas del oponente en el tablero.
+      3. Al colocarse allí, capturan al menos una ficha enemiga según las reglas de Othello/Reversi,
+         lo cual se verifica llamando a la función `comprobar`.
+
+    Parámetros:
+        estado (EstadoJuego): Objeto que contiene el tablero y las posiciones de fichas.
+        turno (int): Identificador del jugador actual (1 = negras, otro = blancas).
+
+    Devuelve:
+        List[List[int, int]]: Lista de coordenadas [fila, columna] donde el movimiento es válido.
+    """
     posibles_acciones = []
     if (turno == 1):
         ficha_actual = "negra"

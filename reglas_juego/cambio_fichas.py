@@ -2,6 +2,16 @@
 
 
 def cambio_de_color_fichas(estado, turno, fila, columna):
+    # 1) Damos por válido el movimiento y colocamos la ficha
+    if turno == 2:
+        valor = 1
+        estado.fichas_blancas.append([fila, columna])
+    else:
+        valor = 2
+        estado.fichas_negras.append([fila, columna])
+
+    estado.tablero[fila][columna] = valor
+
     if turno == 2:
         ficha_propia = "blanca"
         fichas_a_cambiar = obtener_fichas_cambiar(estado, ficha_propia, fila, columna)
@@ -39,6 +49,7 @@ def obtener_fichas_cambiar(estado,ficha_propia,posicion_fila_ficha,posicion_colu
         fichas_cambiar = []
         while 0<=fila<8 and 0<=columna<8:
             if [fila,columna] in fichas_oponente:
+                
                 fichas_cambiar.append([fila,columna])
             elif [fila,columna] in fichas_propias:
                 #se para de coger fichas blancas

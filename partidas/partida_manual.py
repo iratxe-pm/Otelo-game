@@ -31,10 +31,10 @@ def partida_manual(estado):
                     if not (estado.tablero[new_fila][new_columna] == 0):
                         print("Posición inválida. En esa posición ya se encuentra una ficha.")
                         continue
-                    
                    
-                        turno, _ = turnos(turno, new_fila, new_columna, estado)
-                        contador_salta_turno = 0
+                    turno, _ = turnos(turno, new_fila, new_columna, estado)
+                    contador_salta_turno = 0
+
                 except EntradaNoNumericaError as e:
                         print(e)
                 except MovimientoInvalidoError:
@@ -51,12 +51,8 @@ def partida_manual(estado):
 
     print("Juego terminado")
     if (ganador(estado,turno) == 1):
-          print("GANASTES")
+        print("GANASTES")
     elif (ganador(estado,turno) == -1):
-          print("PERDISTES")
+        print("PERDISTES")
     else:
-          print("EMPATE")
-            
-
-
-
+        print("EMPATE")
