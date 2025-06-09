@@ -5,27 +5,43 @@ from reglas_juego.movimientos import reglas_de_movimiento,posibles_movimientos
 import random
 
 def turnos(turno_llega, new_fila, new_columna, estado):
-            #comprueba que si las reglas se cumplen, entonces se produzca el cambio en el tablero
-            if(reglas_de_movimiento(estado,turno_llega,new_fila,new_columna)):
-                cambio_de_color_fichas(estado,turno_llega,new_fila,new_columna)
-                if turno_llega == 1: #turno de las negras
-                    estado.tablero[new_fila][new_columna] = 2  # Ficha negra
-                    estado.ficha_negra([new_fila,new_columna])
-                    turno = 2 #siguiente turno: blancas
-                    
-                elif turno_llega == 2: #turno de las blancas
-                    estado.tablero[new_fila][new_columna] = 1  # Ficha blanca
-                    estado.ficha_blanca([new_fila,new_columna])
-                    turno = 1 #siguiente turno: negras
-                
-                else:
-                    turno = turno_llega
-                    raise JugadorInvalidoError()
-            else: 
-                turno = turno_llega
-                raise MovimientoInvalidoError()
+    """
 
-            return turno, estado
+
+    Parámetros:
+        turno_llega (_type_): _description_
+        new_fila (_type_): _description_
+        new_columna (_type_): _description_
+        estado (_type_): _description_
+
+    Excepciones:
+        JugadorInvalidoError: _description_
+        MovimientoInvalidoError: _description_
+
+    Retorna:
+        _type_: _description_
+    """
+    #comprueba que si las reglas se cumplen, entonces se produzca el cambio en el tablero
+    if(reglas_de_movimiento(estado,turno_llega,new_fila,new_columna)):
+        cambio_de_color_fichas(estado,turno_llega,new_fila,new_columna)
+        if turno_llega == 1: #turno de las negras
+            estado.tablero[new_fila][new_columna] = 2  # Ficha negra
+            estado.ficha_negra([new_fila,new_columna])
+            turno = 2 #siguiente turno: blancas
+            
+        elif turno_llega == 2: #turno de las blancas
+            estado.tablero[new_fila][new_columna] = 1  # Ficha blanca
+            estado.ficha_blanca([new_fila,new_columna])
+            turno = 1 #siguiente turno: negras
+        
+        else:
+            turno = turno_llega
+            raise JugadorInvalidoError()
+    else: 
+        turno = turno_llega
+        raise MovimientoInvalidoError()
+
+    return turno, estado
 
 def sincronizar_fichas_desde_tablero(estado):
     estado.fichas_blancas = []

@@ -32,8 +32,25 @@ def reglas_de_movimiento(estado,turno, posicion_fila_nueva, posicion_columna_nue
     return cumple_con_las_reglas
 
 
-#para comprobar q hay coordenadas al rededor de la ficha válidas
 def comprobar_coordenadas_alrededor(estado,ficha,posicion_fila_nueva,posicion_columna_nueva):
+    """
+    Determina si al colocar una ficha en (fila_nueva, col_nueva) se captura al menos una pieza del oponente, 
+        explorando las ocho direcciones alrededor.
+
+    Flujo:
+      1. Se identifica qué lista es propia y cuál es la del oponente.
+      2. Para cada ficha contraria en el tablero, se invoca `comprobar` para verificar si forma un cierre válido con la posición nueva.
+      3. Si alguna dirección da positivo, la función retorna True de inmediato.
+
+    Parámetros:
+        estado (EstadoJuego): Estado actual del juego, que incluye el tablero y las listas de fichas.
+        ficha (str): Color de la ficha a colocar: "negra" o "blanca".
+        fila_nueva (int): Fila donde se pretende colocar la nueva ficha.
+        col_nueva (int): Columna donde se pretende colocar la nueva ficha.
+
+    Retorna:
+        bool: True si al menos una captura es posible desde esa posición;False en caso contrario.
+    """
     cumple = False
     if ficha == "negra":
         fichas_contrarias = estado.ficha_blanca()
@@ -52,7 +69,10 @@ def comprobar_coordenadas_alrededor(estado,ficha,posicion_fila_nueva,posicion_co
 def comprobar(fichas_propias,fichas_contrarias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva):
     """
     Verifica si al colocar una ficha en (posicion_fila_nueva, posicion_columna_nueva) se captura al menos una ficha 
-    contraria en alguna de las tres orientaciones: horizontal, vertical o diagonal.
+        contraria en alguna de las tres orientaciones: horizontal, vertical o diagonal.
+    
+    Para ello, se llama a las funciones `comprobar_horizontal`, `comprobar_vertical` y `comprobar_diagonal`, respectivamente.
+
 
     Para cada orientación (horizontal, vertical y diagonal), comprueba:
       1. Que haya al menos una ficha contraria contigua a la nueva posición.
@@ -148,7 +168,7 @@ def comprobar_vertical(fichas_propias,fichas_contrarias,fila_ficha_contraria,col
         posicion_columna_nueva (int): Columna donde se quiere colocar la nueva ficha.
 
     Retorna:
-        bool: True si al menos en una dirección vertival se produce una captura, False en caso contrario.
+        bool: True si al menos en una dirección vertical se produce una captura, False en caso contrario.
     """
     cumple = False
     if(columna_ficha_contraria == posicion_columna_nueva):
@@ -176,13 +196,38 @@ def comprobar_vertical(fichas_propias,fichas_contrarias,fila_ficha_contraria,col
 
 #DIAGONAL
 def comprobar_diagonal(fichas_propias,fichas_contrarias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva):
+    """
+    Verifica si colocando una ficha en (posicion_fila_nueva, posicion_columna_nueva) se captura al menos una ficha enemiga
+        en alguna de las diagonales.
+
+    Algoritmo:
+      - Se comprueba si hay una ficha contraria en una casilla diagonal adyacente.
+      - Si es así, se evalúa si en la misma dirección de esa diagonal hay una ficha propia cerrando el grupo de fichas contrarias.
+      - Esto simula la mecánica de captura en juegos como Othello/Reversi.
+
+    Direcciones diagonales verificadas:
+      1. Arriba a la derecha, llamando a `comprobar_diagonal_arriba_derecha`.
+      2. Arriba a la izquierda, llamando a `comprobar_diagonal_arriba_izquierda`.
+      3. Abajo a la izquierda, llamando a `comprobar_diagonal_abajo_izquierda`.
+      4. Abajo a la derecha, llamando a `comprobar_diagonal_abajo_derecha`.
+
+    Parámetros:
+        fichas_propias (List[List[int]]): Coordenadas de las fichas del jugador.
+        fichas_contrarias (List[List[int]]): Coordenadas de las fichas del oponente.
+        fila_ficha_contraria (int): Fila de una ficha contraria adyacente.
+        columna_ficha_contraria (int): Columna de esa ficha contraria.
+        posicion_fila_nueva (int): Fila donde se desea colocar la nueva ficha.
+        posicion_columna_nueva (int): Columna donde se desea colocar la nueva ficha.
+
+    Retorna:
+        bool: True si se produce una captura en alguna diagonal, False en caso contrario.
+    """
+
     cumple = False
-            #yo quiero ponerla a la izquierda abajo de una ficha contraria  
-            # este si funciona    
+    #yo quiero ponerla a la izquierda abajo de una ficha contraria     
     if (columna_ficha_contraria == posicion_columna_nueva +1 and fila_ficha_contraria == posicion_fila_nueva -1):
         return comprobar_diagonal_arriba_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
 
-    #este no
     #pongo la nueva ficha a la derecha abajo de una ficha contraria    
     elif (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva -1):
         return comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
@@ -191,7 +236,6 @@ def comprobar_diagonal(fichas_propias,fichas_contrarias,fila_ficha_contraria,col
     elif (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva +1):
         return comprobar_diagonal_abajo_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
 
-    #este 
     #pongo la nueva ficha a la izquierda arriba de una ficha contraria
     elif (columna_ficha_contraria == posicion_columna_nueva+1 and fila_ficha_contraria == posicion_fila_nueva +1):
         return comprobar_diagonal_abajo_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
@@ -201,8 +245,30 @@ def comprobar_diagonal(fichas_propias,fichas_contrarias,fila_ficha_contraria,col
     
 
 #pongo la ficha abajo izquierda
-#SI FUNCIONA
 def comprobar_diagonal_arriba_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
+    """
+    Verifica si, al colocar una ficha en la posición (posicion_fila_nueva, posicion_columna_nueva) y habiendo una o más 
+        fichas contrarias en la diagonal hacia arriba a la derecha, existe también una ficha propia más adelante en esa misma
+        dirección, lo que validaría la captura.
+
+    Es decir, comprueba que la secuencia de fichas contrarias esté cerrada por una ficha propia en la diagonal 
+        arriba-derecha.
+
+    Algoritmo:
+        - A partir de dos posiciones más arriba y más a la derecha (saltando la ficha contraria adyacente),
+          se avanza en esa diagonal.
+        - Si se encuentra al menos una ficha contraria seguida de una ficha propia, se considera una captura válida.
+        - Si se encuentra una casilla vacía o se sale del tablero antes de cerrar con una ficha propia, no es válido.
+
+    Parámetros:
+        fichas_propias (List[List[int]]): Coordenadas de las fichas del jugador.
+        fichas_contrarias (List[List[int]]): Coordenadas de las fichas del oponente.
+        posicion_fila_nueva (int): Fila donde se quiere colocar la nueva ficha.
+        posicion_columna_nueva (int): Columna donde se quiere colocar la nueva ficha.
+
+    Retorna:
+        bool: True si se puede capturar al menos una ficha enemiga en la diagonal arriba-derecha, False en caso contrario.
+    """
     cumple = False
     columna_a_comprobar = posicion_columna_nueva + 2
     fila_a_comprobar = posicion_fila_nueva -2
@@ -221,8 +287,30 @@ def comprobar_diagonal_arriba_derecha(fichas_propias,fichas_contrarias,posicion_
     return cumple
 
 #pongo la ficha arriba derecha
-#SI FUNCIONA
 def comprobar_diagonal_abajo_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
+    """
+    Verifica si, al colocar una ficha en la posición (posicion_fila_nueva, posicion_columna_nueva) y habiendo una o más 
+        fichas contrarias en la diagonal hacia abajo a la izquierda, existe también una ficha propia más adelante en esa misma
+        dirección, lo que validaría la captura.
+
+    Es decir, comprueba que la secuencia de fichas contrarias esté cerrada por una ficha propia en la diagonal 
+        abajo-izquierda.
+
+    Algoritmo:
+        - A partir de dos posiciones más abajo y más a la izquierda (saltando la ficha contraria adyacente),
+          se avanza en esa diagonal.
+        - Si se encuentra al menos una ficha contraria seguida de una ficha propia, se considera una captura válida.
+        - Si se encuentra una casilla vacía o se sale del tablero antes de cerrar con una ficha propia, no es válido.
+
+    Parámetros:
+        fichas_propias (List[List[int]]): Coordenadas de fichas del jugador.
+        fichas_contrarias (List[List[int]]): Coordenadas de fichas del oponente.
+        posicion_fila_nueva (int): Fila donde se quiere colocar la nueva ficha.
+        posicion_columna_nueva (int): Columna donde se quiere colocar la nueva ficha.
+
+    Retorna:
+        bool: True si se puede capturar al menos una ficha enemiga en la diagonal abajo-izquierda, False en caso contrario.
+    """
     cumple = False
     columna_a_comprobar = posicion_columna_nueva - 2
     fila_a_comprobar = posicion_fila_nueva + 2
@@ -241,8 +329,30 @@ def comprobar_diagonal_abajo_izquierda(fichas_propias,fichas_contrarias,posicion
     return cumple
 
 #pongo la ficha arriba izquierda
-#SI FUNCIONAAAA
 def comprobar_diagonal_abajo_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
+    """
+    Verifica si, al colocar una ficha en la posición (posicion_fila_nueva, posicion_columna_nueva) y habiendo una o más 
+        fichas contrarias en la diagonal hacia abajo a la derecha, existe también una ficha propia más adelante en esa misma
+        dirección, lo que validaría la captura.
+
+    Es decir, comprueba que la secuencia de fichas contrarias esté cerrada por una ficha propia en la diagonal 
+        abajo-derecha.
+
+    Algoritmo:
+        - A partir de dos posiciones más abajo y más a la derecha (saltando la ficha contraria adyacente),
+          se avanza en esa diagonal.
+        - Si se encuentra al menos una ficha contraria seguida de una ficha propia, se considera una captura válida.
+        - Si se encuentra una casilla vacía o se sale del tablero antes de cerrar con una ficha propia, no es válido.
+
+    Parámetros:
+        fichas_propias (List[List[int]]): Coordenadas de fichas del jugador.
+        fichas_contrarias (List[List[int]]): Coordenadas de fichas del oponente.
+        posicion_fila_nueva (int): Fila donde se quiere colocar la nueva ficha.
+        posicion_columna_nueva (int): Columna donde se quiere colocar la nueva ficha.
+
+    Retorna:
+        bool: True si se puede capturar al menos una ficha enemiga en la diagonal abajo-derecha, False en caso contrario.
+    """
     cumple = False
     columna_a_comprobar = posicion_columna_nueva + 2
     fila_a_comprobar = posicion_fila_nueva + 2
@@ -262,8 +372,30 @@ def comprobar_diagonal_abajo_derecha(fichas_propias,fichas_contrarias,posicion_f
     return cumple
 
 #pongo la ficha, abajo derecha
-#SI FUNCIONAAA
 def comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
+    """
+    Verifica si, al colocar una ficha en la posición (posicion_fila_nueva, posicion_columna_nueva) y habiendo una o más 
+        fichas contrarias en la diagonal hacia arriba a la izquierda, existe también una ficha propia más adelante en esa misma
+        dirección, lo que validaría la captura.
+
+    Es decir, comprueba que la secuencia de fichas contrarias esté cerrada por una ficha propia en la diagonal 
+        arriba-izquierda.
+
+    Algoritmo:
+        - A partir de dos posiciones más arriba y más a la izquierda (saltando la ficha contraria adyacente),
+          se avanza en esa diagonal.
+        - Si se encuentra al menos una ficha contraria seguida de una ficha propia, se considera una captura válida.
+        - Si se encuentra una casilla vacía o se sale del tablero antes de cerrar con una ficha propia, no es válido.
+
+    Parámetros:
+        fichas_propias (List[List[int]]): Coordenadas de fichas del jugador.
+        fichas_contrarias (List[List[int]]): Coordenadas de fichas del oponente.
+        posicion_fila_nueva (int): Fila donde se quiere colocar la nueva ficha.
+        posicion_columna_nueva (int): Columna donde se quiere colocar la nueva ficha.
+
+    Retorno:
+         bool: True si se puede capturar al menos una ficha enemiga en la diagonal arriba-izquierda, False en caso contrario.
+    """
     cumple = False
     columna_a_comprobar = posicion_columna_nueva - 2
     fila_a_comprobar = posicion_fila_nueva - 2
@@ -291,7 +423,7 @@ def posibles_movimientos(estado, turno):
       1. Están vacías.
       2. Aún existen fichas del oponente en el tablero.
       3. Al colocarse allí, capturan al menos una ficha enemiga según las reglas de Othello/Reversi,
-         lo cual se verifica llamando a la función `comprobar`.
+         lo cual se verifica llamando a la función `reglas_de_movimiento`.
 
     Parámetros:
         estado (EstadoJuego): Objeto que contiene el tablero y las posiciones de fichas.
@@ -312,19 +444,13 @@ def posibles_movimientos(estado, turno):
     if (len(fichas_blancas) + len(fichas_negras)<64):
         for fila_tabl in range(8):
             for columna_tabl in range(8):
-                if (tablero[fila_tabl][columna_tabl] == 0):
+                if (tablero[fila_tabl][columna_tabl] == 0 and reglas_de_movimiento(estado, turno, fila_tabl, columna_tabl)):
                     if ficha_actual == "blanca":
-                        if(len(fichas_negras)>0):
-                            for[fila_n, columna_n] in fichas_negras:
-                                puede_jugar = comprobar(fichas_blancas,fichas_negras,fila_n,columna_n,fila_tabl,columna_tabl)
-                                if puede_jugar:  
-                                    if not [fila_tabl,columna_tabl] in posibles_acciones:
-                                        posibles_acciones.append([fila_tabl,columna_tabl])
+                        if(len(fichas_negras)>0): 
+                            if not [fila_tabl,columna_tabl] in posibles_acciones:
+                                posibles_acciones.append([fila_tabl,columna_tabl])
                     else:
                         if(len(fichas_blancas)>0):
-                            for[fila_b,columna_b] in fichas_blancas:
-                                puede_jugar = comprobar(fichas_negras,fichas_blancas,fila_b,columna_b,fila_tabl,columna_tabl)
-                                if puede_jugar:
-                                    if not [fila_tabl,columna_tabl] in posibles_acciones:
-                                        posibles_acciones.append([fila_tabl,columna_tabl])           
+                            if not [fila_tabl,columna_tabl] in posibles_acciones:
+                                posibles_acciones.append([fila_tabl,columna_tabl])           
     return posibles_acciones
