@@ -50,17 +50,51 @@ def validar_entrada_numerica(entrada):
 
 
 class ValorFueraDeRango(Exception):
+    """
+    Excepción lanzada cuando el valor introducido está fuera del rango indicado
+
+    Attributes:
+        mensaje (str): "El valor {valor} no está entre {minimo} y {maximo}"
+    """
     def __init__(self, valor, minimo, maximo):
         super().__init__(f"El valor {valor} no está entre {minimo} y {maximo}")
 
 def verificar_valor_en_rango(valor, minimo, maximo):
+    """
+    Valida que la entrada sea un número entre el mínimo y máximo.
+
+    Parámetros:
+        valor (int): valor usado
+        mínimo (int): mínimo del rango
+        maximo (int): máximo del rando
+
+    Lanza:
+        ValorFueraDeRango: Si la entrada no es un número entre el maximo y el minimo.
+    """
     if not (minimo <= valor <= maximo):
         raise ValorFueraDeRango(valor, minimo, maximo)
     
 class PosicionOcupada(Exception):
+    """
+    Excepción lanzada cuando la posición seleccionada está ocupada.
+
+    Attributes:
+        mensaje (str): "La posición ({fila},{columna}) ya está ocupada en el tablero por otra ficha"
+    """
     def __init__(self, fila, columna):
         super().__init__(f"La posición ({fila},{columna}) ya está ocupada en el tablero por otra ficha")
 
 def verificar_poosicion_en_tablero(fila, columna, tablero):
+    """
+    Valida que la fila y columna seleccionadas realmente estén en el tablero.
+
+    Parámetros:
+        fila (int): valor referente a la fila
+        coumna (int): valor referente a la columna
+        tablero (list): matriz de 8x8
+
+    Lanza:
+        PosicionOcupada: Si la la posición seleccionada con fila y columna no está en el tablero.
+    """
     if tablero[fila][columna] != 0:
         raise PosicionOcupada(fila, columna)

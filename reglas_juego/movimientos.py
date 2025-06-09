@@ -1,7 +1,3 @@
-#Turnos de juego
-#reglas de movimiento del juego, recibe la posicion de la ficha que quiere mover y 
-# la posición del tablero al que quiere mover la ficha
-#los parametros son turno, para saber si es turno de una blanca o negra
 
 def reglas_de_movimiento(estado,turno, posicion_fila_nueva, posicion_columna_nueva) : 
     """
@@ -147,7 +143,6 @@ def comprobar_horizontal(fichas_propias,fichas_contrarias,fila_ficha_contraria,c
                     break
     return cumple
 
-#VERTICAL
 def comprobar_vertical(fichas_propias,fichas_contrarias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva):
     """
     Verifica si colocando una ficha en (posicion_fila_nueva, posicion_columna_nueva) se capturan fichas enemigas en la misma columna, 
@@ -194,7 +189,6 @@ def comprobar_vertical(fichas_propias,fichas_contrarias,fila_ficha_contraria,col
                     break
     return cumple
 
-#DIAGONAL
 def comprobar_diagonal(fichas_propias,fichas_contrarias,fila_ficha_contraria,columna_ficha_contraria,posicion_fila_nueva,posicion_columna_nueva):
     """
     Verifica si colocando una ficha en (posicion_fila_nueva, posicion_columna_nueva) se captura al menos una ficha enemiga
@@ -224,19 +218,15 @@ def comprobar_diagonal(fichas_propias,fichas_contrarias,fila_ficha_contraria,col
     """
 
     cumple = False
-    #yo quiero ponerla a la izquierda abajo de una ficha contraria     
     if (columna_ficha_contraria == posicion_columna_nueva +1 and fila_ficha_contraria == posicion_fila_nueva -1):
         return comprobar_diagonal_arriba_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
 
-    #pongo la nueva ficha a la derecha abajo de una ficha contraria    
     elif (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva -1):
         return comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
     
-    #pongo la nueva ficha a la derecha arriba de una ficha contraria
     elif (columna_ficha_contraria == posicion_columna_nueva-1 and fila_ficha_contraria == posicion_fila_nueva +1):
         return comprobar_diagonal_abajo_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
 
-    #pongo la nueva ficha a la izquierda arriba de una ficha contraria
     elif (columna_ficha_contraria == posicion_columna_nueva+1 and fila_ficha_contraria == posicion_fila_nueva +1):
         return comprobar_diagonal_abajo_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva)
     else:
@@ -244,7 +234,6 @@ def comprobar_diagonal(fichas_propias,fichas_contrarias,fila_ficha_contraria,col
             
     
 
-#pongo la ficha abajo izquierda
 def comprobar_diagonal_arriba_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
     """
     Verifica si, al colocar una ficha en la posición (posicion_fila_nueva, posicion_columna_nueva) y habiendo una o más 
@@ -278,15 +267,12 @@ def comprobar_diagonal_arriba_derecha(fichas_propias,fichas_contrarias,posicion_
             fila_a_comprobar -=1
             continue
         elif ([fila_a_comprobar,columna_a_comprobar] in fichas_propias):
-            # Si encontramos una del mismo color, la secuencia es válida
             cumple = True
             break
         else:
-            # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
             break
     return cumple
 
-#pongo la ficha arriba derecha
 def comprobar_diagonal_abajo_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
     """
     Verifica si, al colocar una ficha en la posición (posicion_fila_nueva, posicion_columna_nueva) y habiendo una o más 
@@ -320,15 +306,12 @@ def comprobar_diagonal_abajo_izquierda(fichas_propias,fichas_contrarias,posicion
             fila_a_comprobar +=1
             continue
         elif ([fila_a_comprobar,columna_a_comprobar] in fichas_propias):
-            # Si encontramos una del mismo color, la secuencia es válida
             cumple = True
             break
         else:
-            # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
             break
     return cumple
 
-#pongo la ficha arriba izquierda
 def comprobar_diagonal_abajo_derecha(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
     """
     Verifica si, al colocar una ficha en la posición (posicion_fila_nueva, posicion_columna_nueva) y habiendo una o más 
@@ -362,16 +345,13 @@ def comprobar_diagonal_abajo_derecha(fichas_propias,fichas_contrarias,posicion_f
             fila_a_comprobar +=1
             continue
         elif ([fila_a_comprobar,columna_a_comprobar] in fichas_propias):
-            # Si encontramos una del mismo color, la secuencia es válida
             cumple = True
             break
         else:
-            # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
             break
             
     return cumple
 
-#pongo la ficha, abajo derecha
 def comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicion_fila_nueva,posicion_columna_nueva):
     """
     Verifica si, al colocar una ficha en la posición (posicion_fila_nueva, posicion_columna_nueva) y habiendo una o más 
@@ -405,11 +385,9 @@ def comprobar_diagonal_arriba_izquierda(fichas_propias,fichas_contrarias,posicio
             fila_a_comprobar -=1
             continue
         elif ([fila_a_comprobar,columna_a_comprobar] in fichas_propias):
-            # Si encontramos una del mismo color, la secuencia es válida
             cumple = True
             break
         else:
-            # Si no hay ficha blanca ni del mismo color: hay un hueco o una del enemigo, no sirve
             break
             
     return cumple

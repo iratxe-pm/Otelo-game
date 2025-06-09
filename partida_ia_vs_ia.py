@@ -55,7 +55,6 @@ def partida_ia_vs_ia():
 
             accion_elegida = mcts(estado.tablero, turno)
 
-            # Aplica la acción y actualiza el estado
             turnos(turno, accion_elegida[0], accion_elegida[1], estado)
 
             ganador_actual = ganador(estado, turno)
@@ -64,5 +63,4 @@ def partida_ia_vs_ia():
 
             turno = 3 - turno
 
-    # Finalmente, guarda el DataFrame a CSV si quieres
     fichero_ia_vs_ia.to_csv("partidas_ia_vs_ia.csv", index=False)

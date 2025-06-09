@@ -1,4 +1,3 @@
-#PARTIDA IA VS HUMANO
 
 from reglas_juego.avance_juego import ganador, turnos
 from mcts import mcts
@@ -51,7 +50,7 @@ def partida_mixta(estado):
         estado (EstadoJuego): Objeto que representa el estado actual del juego, incluyendo el tablero y las listas de fichas.
     """
     
-    turno = 1  # Empieza el jugador negro
+    turno = 1  
     contador_salta_turno = 0
     print("¿Quieres jugar como NEGRO (●) o BLANCO (○)?")
     print("\nFichas NEGRAS -> 1")
@@ -60,7 +59,7 @@ def partida_mixta(estado):
         try:
             modo = validar_entrada_numerica(input("Elija sus fichas: "))
             verificar_valor_en_rango(modo, 1, 2)
-            break  # solo si todo va bien
+            break  
         except (EntradaNoNumericaError, ValorFueraDeRango) as e:
             print(f"Error: {e}. Intente de nuevo.\n")
 
@@ -89,7 +88,7 @@ def partida_mixta(estado):
                 except (EntradaNoNumericaError,  ValorFueraDeRango, PosicionOcupada, MovimientoInvalidoError, JugadorInvalidoError)   as e:
                     print(f"Error: {e}. Intentalo de nuevo.")
 
-            else:  # Turno de la IA
+            else:  
                 accion = mcts(estado.tablero, turno)
                 turno, _ = turnos(turno, accion[0], accion[1], estado)
                 contador_salta_turno = 0

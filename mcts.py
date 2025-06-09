@@ -7,8 +7,6 @@ import random
 from copy import deepcopy
 from keras.models import load_model
 
-#los de ficha negra son los nodos de nivel impar, y lo de blanca se encuentran en el nivel par
-
 red_otelo = load_model("red_otelo.h5")
 class crear_nodo:
     """
@@ -26,21 +24,16 @@ class crear_nodo:
         recompensa_acomulada (float): Recompensa acumulada para el nodo.
     """
     def __init__ (self, estado, turno, padre= None, action= None):
-        self.posicion = estado #guarda la posicion del tablero,  con la accion action ya implicada
-        self.turno = turno #guarda el turno de este estado en concreto
-        self.padre = padre #el estado anterior
-        self.action = action #guarda la accion que hace que lleguen a ese nodo
-        self.hijos = [] #guarda los hijos de ese nodo; son los nuevos estados del tablero
-        self.acciones_posibles = posibles_movimientos(estado,turno) #aqui guarda las acciones de ese nodo que pueda tomar
-        self.acciones_hechas = [] #para comprobar si se ha extendido del todo o no el nodo
-        #estos dos de abajo sirve para calcular después el UCT 
-        self.visitas = 0 #se guarda el numero de veces q se accede a este nodo; al inicio es 0 pq solo se crea no se visita
-        self.recompensa_acomulada = 0 #va guardando la recompensa
+        self.posicion = estado 
+        self.turno = turno 
+        self.padre = padre 
+        self.action = action 
+        self.hijos = [] 
+        self.acciones_posibles = posibles_movimientos(estado,turno) 
+        self.acciones_hechas = [] 
+        self.visitas = 0 
+        self.recompensa_acomulada = 0
         
-
-#uct valor de la constante es sqrt(2) pq lo dice q lo hagamos segun un documento a survey of monte carlo tree search methods
-#1000 iteraciones
-#el mcts primero explora todos sus hijos, y luego cuando ya cuando se conozca se explota
 def mcts(tablero,turno,iteraccion = 100):
     """
     Ejecuta el algoritmo Monte Carlo Tree Search (MCTS) para elegir la mejor acción desde un estado dado.
@@ -52,14 +45,19 @@ def mcts(tablero,turno,iteraccion = 100):
 
     Retorna:
         list: Acción seleccionada (fila, columna) que maximiza el valor esperado.
+
+    * NOTA: si se quiere ejecutar el mcts sin red neuronal haga:
+        1º descomente la línea: " #partida_simulada = simulacion(nodo_seleccionado) " (Línea: 64)
+        2º comentar la línea: " partida_simulada_con_red = simulacion_con_red(nodo_seleccionado) " (Línea 65)
+        3º cambie en la llamada al método retropopagación(partida_simulada_con_red, nodo_seleccionado) (Línea 66)
+            partida_simulada_con_red por partida_simulada
     """
     estado_inicial = EstadoJuego()
     estado_inicial.tablero = deepcopy(tablero)
-    sincronizar_fichas_desde_tablero(estado_inicial)  # Sincronizamos fichas con tablero
+    sincronizar_fichas_desde_tablero(estado_inicial)
     
     raiz = crear_nodo(estado_inicial,turno)
     for i in range(0,iteraccion):
-        #se le manda el nodo raiz, porque la selección siempre se empieza por el nodo raí
         nodo_seleccionado = seleccion_nodo_siguiente(raiz)
         #partida_simulada = simulacion(nodo_seleccionado)
         partida_simulada_con_red = simulacion_con_red(nodo_seleccionado)
@@ -67,7 +65,6 @@ def mcts(tablero,turno,iteraccion = 100):
 
     return seleccion_hijo_uct(raiz).action
 
-#primera fase del árbol mcts
 
 def seleccion_nodo_siguiente(nodo):
     """
@@ -80,25 +77,13 @@ def seleccion_nodo_siguiente(nodo):
     Retorna:
         crear_nodo: Nodo seleccionado para expansión o nodo terminal si la partida finalizó.
     """
-
-    #este if es por si cuando se busca el nodo, si la partida se ha acabado, entonces elige ese nodo y no se expande
-    #si cumple este if, significa que es un nodo terminal
-    #se pone asi porque tiene que comprobar los dos turnos
     if (len(posibles_movimientos(nodo.posicion,1)) == 0 and len(posibles_movimientos(nodo.posicion,2)) == 0):
         return nodo
     
-    #esta es para ver que si se ha expandido; es decir que el nodo se puede expandir mas
     if (len(nodo.acciones_posibles) != len(nodo.acciones_hechas)):
         return expandir(nodo)
     
-    
-    #uct solo se usa cuando el nodo ya ha sido extendido, por lo tanto los hijos del nodo ya se conocen
     hijo_mejor_uct = seleccion_hijo_uct(nodo)
-
-    #vuelve a llamar a seleccion_nodo_siguiente, para comprobar si:
-    # - es terminal o no, en ese caso se devolveria ese nodo
-    # - tiene acciones que no se han explorado todavía, es decir que no se ha expandido del todo, por lo que se envía ese nodo a expandir (es del que se partiría)
-    # - y sino se cumple nada de los dos otros puntos, es decir no es terminal, y ya se ha expandido del todo, entonces se elige otro nodo 
 
     return seleccion_nodo_siguiente(hijo_mejor_uct)
 
@@ -120,7 +105,6 @@ def expandir(nodo):
             nodo.hijos.append(nodo_obtenido)
             nodo.acciones_hechas.append(accion)
             return nodo_obtenido
-    # Si ya se expandió todo, devuelve el nodo actual para evitar None
     return nodo
 
 
@@ -141,27 +125,21 @@ def seleccion_hijo_uct(nodo):
     for hijo in nodo.hijos:
         recompensa = hijo.recompensa_acomulada
         n_visitas = hijo.visitas
-        if (n_visitas == 0): #por si todavía no se ha visitado
+        if (n_visitas == 0): 
             uct = float("inf")
         else:
             uct = (recompensa / n_visitas) + c * math.sqrt((2 * math.log(nodo.visitas)) / n_visitas)
         
         if(uct > uct_mejor):
             uct_mejor = uct
-            mejor_hijo = [hijo]#se guarda en la lista en caso deempate; se hace asi aqui para guardar solamente al de mayot
+            mejor_hijo = [hijo]
         elif (uct == uct_mejor):
-            mejor_hijo.append(hijo) #en caso de empate, se añaden los dos a la lista
+            mejor_hijo.append(hijo) 
 
-    #en caso de empate se elige uno al azar; si solo hay uno es ese el que se escoge
     hijo_seleccionado = random.choice(mejor_hijo) 
              
     return hijo_seleccionado
 
-    
-#simulación 
-# solo se aplica la similación al nodo que ha sido elegido para expandirse
-# la simulación consiste en simular una partida a partir del estado del tablero en ese momento con movimientos aleatorios
-#simulacion aleatoria pa crear csv
 def simulacion(nodo):
     """
     Simula una partida desde el estado del nodo con movimientos aleatorios hasta finalizar la partida.
@@ -193,7 +171,6 @@ def simulacion_con_red(nodo):
 
     return prediccion
 
-#retropropagación
 def retropopagación (partida_simulada, nodo):
     """
     Propaga hacia arriba en el árbol los resultados de la simulación, actualizando visitas y recompensas.
@@ -206,6 +183,6 @@ def retropopagación (partida_simulada, nodo):
     while actual is not None:
         actual.visitas += 1
         actual.recompensa_acomulada += partida_simulada
-        partida_simulada *= -1  # alternar perspectiva para el oponente xq el padre y el hijo tienen turnos opuestos
-        actual = actual.padre #va actualizando todos los anteriores
+        partida_simulada *= -1  
+        actual = actual.padre 
 

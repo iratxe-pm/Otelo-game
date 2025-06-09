@@ -40,7 +40,7 @@ def partida_manual(estado):
     Parámetros: estado (EstadoJuego): Objeto que representa el estado actual del juego, incluyendo el tablero y las listas de fichas.
     """
 
-    turno = 1  # Empieza el jugador negro
+    turno = 1  
     contador_salta_turno = 0
 
     while (contador_salta_turno<2):
@@ -55,7 +55,6 @@ def partida_manual(estado):
             
         if (len(movimientos) != 0):
                 try:
-                    #Selección de casilla a la que se mueve la ficha
                     new_fila = validar_entrada_numerica(input("Ingrese la fila a donde va a mover la ficha (0-7): "))
                     verificar_valor_en_rango(new_fila, 0, 7)
                     new_columna = validar_entrada_numerica(input("Ingrese la columna a donde va a mover la ficha (0-7): "))
