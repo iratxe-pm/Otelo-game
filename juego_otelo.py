@@ -28,6 +28,7 @@ if __name__ == "__main__":
         try: 
             modo = input("Selecciona modo: ")
             validar_entrada_numerica(modo)
+            modo = int(modo)
             verificar_valor_en_rango(modo, 1, 3)
 
             if modo == 1:
