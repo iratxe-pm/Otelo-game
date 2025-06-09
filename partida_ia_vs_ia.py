@@ -24,66 +24,42 @@ def crear_linea_csv(tablero,turno, ganador):
     #y ahora le añado estas dos columnas, con ese valor
     return linea
 
-
 def partida_ia_vs_ia():
-    estado = EstadoJuego()
-    turno = 1  
-    partidas = 1
+    partidas = 20
+    fichero_ia_vs_ia = pd.DataFrame()
 
+    for _ in range(partidas):
+        estado = EstadoJuego()
+        turno = 1
+        partida_realizada = []
 
-    fichero_ia_vs_ia = pd.DataFrame()#crea un dataframe vacío sin líneas ni columnas
-    #dataframe cada columna puede tener un tipo distinto
+        while True:
+            movimientos_posibles = posibles_movimientos(estado, turno)
+            movimientos_oponente = posibles_movimientos(estado, 3 - turno)
 
-    
-    for i in range(partidas+1):
-
-        sigue_jugando = True
-
-        turno = 1 #se empieza siempre por elturno 1
-
-        tablero = estado.tablero #creo un tablero vacío
-
-        partida_realizada = [] #sirve para ir guardando los estados de la partida para después añadirlos en el csv
-
-        while sigue_jugando :
-
-            #compruebo si se ha terminado la partida
-            if((len(posibles_movimientos(estado,1)) == 0) and (len(posibles_movimientos(estado,2)) == 0)) :
-                ganadore = ganador(estado,turno)
+            if len(movimientos_posibles) == 0 and len(movimientos_oponente) == 0:
+                ganador_partida = ganador(estado, turno)
                 for linea in partida_realizada:
-                    if(linea["turno"] == turno):
-                        linea["ha_ganado"] = ganadore
-                    else:
-                        if(ganador == 0):
-                            linea["ha_ganado"] = 0
-                        elif (ganador == 1):
-                            linea["ha_ganado"] = -1
-                        else:
-                            linea["ha_ganado"] = 1
-                    
-
-                    #concatena lo que ya tenia guardado con el nuevo creado de esta partida
-                    #lo de ignore_index, ignora los indices anteriores
                     fichero_ia_vs_ia = pd.concat([fichero_ia_vs_ia, pd.DataFrame([linea])], ignore_index=True)
                 break
 
-            if len(posibles_movimientos(estado,turno)) == 0 :
+            if len(movimientos_posibles) == 0:
                 turno = 3 - turno
                 continue
 
-            accion_elegida = mcts(tablero,turno)
+            accion_elegida = mcts(estado.tablero, turno)
 
-            turnos(turno,accion_elegida[0],accion_elegida[1],estado)
+            # Aplica la acción y actualiza el estado
+            turnos(turno, accion_elegida[0], accion_elegida[1], estado)
 
-            #en cada estado, se especifica al principio antes de saber quien es de verdad el ganador, se pone quien va ganando de momento
-            ganadore = ganador(estado,turno)
-
-            nueva_linea = crear_linea_csv(tablero,turno,ganadore)
+            ganador_actual = ganador(estado, turno)
+            nueva_linea = crear_linea_csv(estado.tablero, turno, ganador_actual)
             partida_realizada.append(nueva_linea)
 
             turno = 3 - turno
 
-    fichero_ia_vs_ia.to_csv('partida_ia_vs_ia.csv', index=False)
+    # Finalmente, guarda el DataFrame a CSV si quieres
+    fichero_ia_vs_ia.to_csv("partidas_ia_vs_ia.csv", index=False)
 
 """
     print("Inicio de la partida IA vs IA")
