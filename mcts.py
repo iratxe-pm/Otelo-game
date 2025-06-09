@@ -1,9 +1,12 @@
+import numpy as np
 from reglas_juego.estado_juego import EstadoJuego
 from reglas_juego.movimientos import posibles_movimientos
 from reglas_juego.avance_juego import partida_simulada, turnos, sincronizar_fichas_desde_tablero
 import math
 import random
 from copy import deepcopy
+from keras.models import load_model
+
 #los de ficha negra son los nodos de nivel impar, y lo de blanca se encuentran en el nivel par
 
 """
@@ -11,7 +14,7 @@ Funcionamiento:
 se crea un árbol y por cada nodo que se accede; al principio uno de los hijos de raiz
 """
 
-
+red_otelo = load_model("red_otelo.h5")
 class crear_nodo:
     def __init__ (self, estado, turno, padre= None, action= None):
         self.posicion = estado #guarda la posicion del tablero,  con la accion action ya implicada
@@ -38,8 +41,9 @@ def mcts(tablero,turno,iteraccion = 100):
     for i in range(0,iteraccion):
         #se le manda el nodo raiz, porque la selección siempre se empieza por el nodo raí
         nodo_seleccionado = seleccion_nodo_siguiente(raiz)
-        partida_simulada = simulacion(nodo_seleccionado)
-        retropopagación(partida_simulada, nodo_seleccionado)
+        #partida_simulada = simulacion(nodo_seleccionado)
+        partida_simulada_con_red = simulacion_con_red(nodo_seleccionado)
+        retropopagación(partida_simulada_con_red, nodo_seleccionado)
 
     return seleccion_hijo_uct(raiz).action
 
@@ -71,7 +75,6 @@ def seleccion_nodo_siguiente(nodo):
 def expandir(nodo):
     for accion in nodo.acciones_posibles:
         if accion not in nodo.acciones_hechas:
-            print("accion elegida",accion)
             estado_copia = deepcopy(nodo.posicion)
             turno_siguiente, estado_nuevo = turnos(nodo.turno, accion[0], accion[1], estado_copia)
             nodo_obtenido = crear_nodo(estado_nuevo, turno_siguiente, nodo, accion)
@@ -106,12 +109,22 @@ def seleccion_hijo_uct(nodo):
     return hijo_seleccionado
 
     
-#simulación
+#simulación 
 # solo se aplica la similación al nodo que ha sido elegido para expandirse
 # la simulación consiste en simular una partida a partir del estado del tablero en ese momento con movimientos aleatorios
+#simulacion aleatoria pa crear csv
 def simulacion(nodo):
-    resultado = partida_simulada(nodo.turno, nodo.posicion)
+    resultado, _ , _ = partida_simulada(nodo.turno, nodo.posicion)
     return resultado
+
+def simulacion_con_red(nodo):
+    resultado, tablero, turno = partida_simulada(nodo.turno, nodo.posicion)
+    tablero_vector = np.array(tablero).flatten()
+    turno_vector = np.array([turno])
+    entrada_red = np.concatenate((tablero_vector, turno_vector))
+    prediccion = red_otelo.predict(np.array([entrada_red]), verbose=0)[0][0]
+
+    return prediccion
 
 #retropropagación
 def retropopagación (partida_simulada, nodo):

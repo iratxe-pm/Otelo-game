@@ -1,6 +1,6 @@
 #PARTIDA VS PARTIDA
 
-from reglas_juego.avance_juego import turnos
+from reglas_juego.avance_juego import ganador, turnos
 from partidas.mostrar_tablero import mostrar_tablero
 from reglas_juego.movimientos import posibles_movimientos
 from mcts import mcts  # Asegúrate de importar tu función MCTS correctamente
@@ -25,7 +25,18 @@ def partida_automática(estado):
         accion = mcts(estado.tablero, turno)
         turno, estado = turnos(turno, accion[0], accion[1], estado)
 
-        print(f"\nIA con turno {turno} coloca ficha en {accion}")
+        if turno == 1:
+            print("\nTurno del jugador NEGRO (●)")
+        else:
+            print("\nTurno del jugador BLANCO (○)")
         mostrar_tablero(estado.tablero)
         time.sleep(1)
+    print("Juego terminado")
+    if (ganador(estado,turno) == 1):
+          print("GANASTES")
+    elif (ganador(estado,turno) == -1):
+          print("PERDISTES")
+    else:
+          print("EMPATE")
+            
    

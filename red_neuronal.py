@@ -10,6 +10,14 @@ from keras.layers import Dense, BatchNormalization, Dropout
 
 from keras.optimizers import SGD
 
+#CUANDO SE VAYA A ENTRENAR CON MÁS PARTIDAS: 
+# PRIMERO: EJECUTAR SIMULACION SIN RED Y GENERAR CSV (DESCOMENTAR COSAS EN MTCS Y JUEGO OTELO)
+# SEGUNDO: VOLVER A COMENTAR ESAS COSAS Y DEJARLO COMO ESTABA (ANTES DE TOCAR LA RED Y DESPUES DE CREAR CSV)
+# TERCERO: ENTRENAR LA RED EJECUTANDO EN LA TERMINAL EL COMANDO: PYTHON RED_NEURONAL.PY (EJECUTAR FICHERO CON RED)
+# CUARTO: COMPROBAR QUE SE CREA ARCHIVO RED_OTELO.H5
+# QUINTO: EJECUTAR NORMAL EL JUEGO EN IA VS IA O IA VS HUMANO PA PROBAR SU FUNCIONAMIENTO (NO DEBE DE DAR ERROR, SOLO VA LENTO)
+# SI SE CAMBIAN LOS PARÁMETROS DE LA RED, REALIZAR A PARTIR DEL PASO TERCERO
+
 partidas_otelo = pd.read_csv("partidas_ia_vs_ia.csv")
 print(partidas_otelo.head())
 
@@ -28,19 +36,16 @@ print(objetivo.head())
         test_size=.2
 )
 
-# Crear red mejorada
+# Crear red 
 red_otelo = Sequential([
     Input(shape=(65,)),                   # entra 64 casillas + 1 turno
     Dense(256, activation='relu'),        # capa grande = captar patrones complejos / relu = eficiente, aprede relaciones no lineale
-    BatchNormalization(),
-    Dropout(0.3),
+    Dropout(0.3),                         #apaga una parte de las neuronas pa q no memorice
 
     Dense(128, activation='relu'),
-    BatchNormalization(),
     Dropout(0.3),
 
     Dense(64, activation='relu'),
-    BatchNormalization(),
     Dropout(0.2),
 
     Dense(1, activation='tanh')           # Salida en rango [-1, 1]

@@ -59,7 +59,8 @@ def partida_simulada(turno_llega, estado):
             contador_salta_turno += 1
             turno = 2 if turno == 1 else 1  # Cambia turno correctamente
             
-    return ganador(estado, turno)
+    gana = ganador(estado, turno)
+    return gana, estado.tablero, turno
 
 
 def ganador(estado, turno):
