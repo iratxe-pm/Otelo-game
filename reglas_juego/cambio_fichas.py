@@ -1,4 +1,3 @@
-##cambio de color
 from reglas_juego.movimientos import comprobar
 
 def cambio_de_color_fichas(estado, turno, fila, columna):
@@ -23,7 +22,7 @@ def cambio_de_color_fichas(estado, turno, fila, columna):
                 estado.fichas_blancas.append(pos)
             if pos in estado.fichas_negras:
                 estado.fichas_negras.remove(pos)
-            estado.tablero[pos[0]][pos[1]] = 1  # Blanca
+            estado.tablero[pos[0]][pos[1]] = 1  
     else:
         ficha_propia = "negra"
         fichas_a_cambiar = obtener_fichas_cambiar(estado, ficha_propia, fila, columna)
@@ -32,10 +31,9 @@ def cambio_de_color_fichas(estado, turno, fila, columna):
                 estado.fichas_negras.append(pos)
             if pos in estado.fichas_blancas:
                 estado.fichas_blancas.remove(pos)
-            estado.tablero[pos[0]][pos[1]] = 2  # Negra
+            estado.tablero[pos[0]][pos[1]] = 2  
 
 
-#se le manda la ficha a cambiar, en la posicion que se quiere cambiar
 def obtener_fichas_cambiar(estado,ficha_propia,posicion_fila_ficha,posicion_columna_ficha):
     """
     Obtiene la lista de fichas del oponente que deben cambiar de color tras colocar una ficha en una posición determinada, 
@@ -74,12 +72,10 @@ def obtener_fichas_cambiar(estado,ficha_propia,posicion_fila_ficha,posicion_colu
     for dx, dy in direcciones:
         fila, columna = posicion_fila_ficha + dx, posicion_columna_ficha + dy
         fichas_cambiar  = []
-        # Recolectar contrarias
         while 0 <= fila < 8 and 0 <= columna < 8 and [fila, columna] in contrarias:
             fichas_cambiar .append([fila, columna])
             fila += dx
             columna += dy
-        # Confirmar el cierre con una propia simulada
         if [fila, columna] in propias and fichas_cambiar :
             fichas_cambiar_global.extend(fichas_cambiar )
 

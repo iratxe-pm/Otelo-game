@@ -1,4 +1,3 @@
-#Se encarga de actualizar la posición de las piezas en el tablero a medida que avanza el juego
 from reglas_juego.excepciones import JugadorInvalidoError, MovimientoInvalidoError
 from reglas_juego.cambio_fichas import cambio_de_color_fichas
 from reglas_juego.movimientos import reglas_de_movimiento,posibles_movimientos 
@@ -32,18 +31,17 @@ def turnos(turno_llega, new_fila, new_columna, estado):
             - EstadoJuego: Estado actualizado del juego con el tablero modificado.
     """
 
-    #comprueba que si las reglas se cumplen, entonces se produzca el cambio en el tablero
     if(reglas_de_movimiento(estado,turno_llega,new_fila,new_columna)):
         cambio_de_color_fichas(estado,turno_llega,new_fila,new_columna)
-        if turno_llega == 1: #turno de las negras
-            estado.tablero[new_fila][new_columna] = 2  # Ficha negra
+        if turno_llega == 1: 
+            estado.tablero[new_fila][new_columna] = 2  
             estado.ficha_negra([new_fila,new_columna])
-            turno = 2 #siguiente turno: blancas
+            turno = 2 
             
-        elif turno_llega == 2: #turno de las blancas
-            estado.tablero[new_fila][new_columna] = 1  # Ficha blanca
+        elif turno_llega == 2: 
+            estado.tablero[new_fila][new_columna] = 1 
             estado.ficha_blanca([new_fila,new_columna])
-            turno = 1 #siguiente turno: negras
+            turno = 1 
         
         else:
             turno = turno_llega
@@ -121,14 +119,12 @@ def partida_simulada(turno_llega, estado):
             try:
                 turno, estado = turnos(turno, accion_seleccionada[0], accion_seleccionada[1], estado)
             except MovimientoInvalidoError:
-                # Opcional: imprimir info para debug
                 print(f"Movimiento inválido en partida automática: turno {turno}, acción {accion_seleccionada}")
-                # Puedes decidir si romper, continuar, o salir
                 break
-            contador_salta_turno = 0  # Reinicia si hubo movimiento válido
+            contador_salta_turno = 0  
         else:
             contador_salta_turno += 1
-            turno = 2 if turno == 1 else 1  # Cambia turno correctamente
+            turno = 2 if turno == 1 else 1  
             
     gana = ganador(estado, turno)
     return gana, estado.tablero, turno
