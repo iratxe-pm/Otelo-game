@@ -44,7 +44,7 @@ def obtener_fichas_cambiar(estado,ficha_propia,posicion_fila_ficha,posicion_colu
         while 0 <= fila < 8 and 0 <= columna < 8 and [fila, columna] in contrarias:
             fichas_cambiar .append([fila, columna])
             fila += dx
-            ccolumna += dy
+            columna += dy
         # Confirmar el cierre con una propia simulada
         if [fila, columna] in propias and fichas_cambiar :
             fichas_cambiar_global.extend(fichas_cambiar )
