@@ -9,13 +9,22 @@ from keras.models import load_model
 
 #los de ficha negra son los nodos de nivel impar, y lo de blanca se encuentran en el nivel par
 
-"""
-Funcionamiento:
-se crea un árbol y por cada nodo que se accede; al principio uno de los hijos de raiz
-"""
-
 red_otelo = load_model("red_otelo.h5")
 class crear_nodo:
+    """
+    Clase que representa un nodo en el árbol de búsqueda MCTS.
+
+    Atributos:
+        posicion (EstadoJuego): Estado actual del tablero con la acción aplicada.
+        turno (int): Turno del jugador para este nodo (1=negras, 2=blancas).
+        padre (crear_nodo): Nodo padre en el árbol.
+        action (list): Acción que llevó a este estado (fila, columna).
+        hijos (list): Lista de nodos hijos (estados sucesores).
+        acciones_posibles (list): Acciones legales posibles desde este nodo.
+        acciones_hechas (list): Acciones ya exploradas/expandidas.
+        visitas (int): Número de veces que se ha visitado este nodo.
+        recompensa_acomulada (float): Recompensa acumulada para el nodo.
+    """
     def __init__ (self, estado, turno, padre= None, action= None):
         self.posicion = estado #guarda la posicion del tablero,  con la accion action ya implicada
         self.turno = turno #guarda el turno de este estado en concreto
@@ -33,6 +42,17 @@ class crear_nodo:
 #1000 iteraciones
 #el mcts primero explora todos sus hijos, y luego cuando ya cuando se conozca se explota
 def mcts(tablero,turno,iteraccion = 100):
+    """
+    Ejecuta el algoritmo Monte Carlo Tree Search (MCTS) para elegir la mejor acción desde un estado dado.
+
+    Parámetros:
+        tablero (list): Estado actual del tablero (matriz 8x8).
+        turno (int): Turno del jugador actual (1=negras, 2=blancas).
+        iteraccion (int, opcional): Número de iteraciones para la búsqueda MCTS (por defecto 100).
+
+    Retorna:
+        list: Acción seleccionada (fila, columna) que maximiza el valor esperado.
+    """
     estado_inicial = EstadoJuego()
     estado_inicial.tablero = deepcopy(tablero)
     sincronizar_fichas_desde_tablero(estado_inicial)  # Sincronizamos fichas con tablero
@@ -50,6 +70,16 @@ def mcts(tablero,turno,iteraccion = 100):
 #primera fase del árbol mcts
 
 def seleccion_nodo_siguiente(nodo):
+    """
+    Selecciona recursivamente el siguiente nodo a expandir usando el criterio UCT.
+    Si no se ha expandido completamente, se expande; si ya está expandido, selecciona por UCT.
+
+    Parámetros:
+        nodo (crear_nodo): Nodo actual en el árbol.
+
+    Retorna:
+        crear_nodo: Nodo seleccionado para expansión o nodo terminal si la partida finalizó.
+    """
 
     #este if es por si cuando se busca el nodo, si la partida se ha acabado, entonces elige ese nodo y no se expande
     #si cumple este if, significa que es un nodo terminal
@@ -73,6 +103,15 @@ def seleccion_nodo_siguiente(nodo):
     return seleccion_nodo_siguiente(hijo_mejor_uct)
 
 def expandir(nodo):
+    """
+    Expande un nodo explorando una acción no visitada previamente, creando un nuevo hijo.
+
+    Parámetros:
+        nodo (crear_nodo): Nodo a expandir.
+
+    Retorna:
+        crear_nodo: Nuevo nodo hijo creado tras aplicar una acción no explorada.
+    """
     for accion in nodo.acciones_posibles:
         if accion not in nodo.acciones_hechas:
             estado_copia = deepcopy(nodo.posicion)
@@ -86,6 +125,16 @@ def expandir(nodo):
 
 
 def seleccion_hijo_uct(nodo):
+    """
+    Selecciona el hijo del nodo con el mejor valor UCT (Upper Confidence Bound applied to Trees).
+    Si un hijo no ha sido visitado se le asigna valor infinito para asegurar exploración.
+
+    Parámetros:
+        nodo (crear_nodo): Nodo padre cuyos hijos se evaluarán.
+
+    Retorna:
+        crear_nodo: Nodo hijo con el valor UCT más alto, desempatando al azar si es necesario.
+    """
     c = math.sqrt(2)
     uct_mejor = float("-inf") 
     mejor_hijo = []
@@ -114,10 +163,28 @@ def seleccion_hijo_uct(nodo):
 # la simulación consiste en simular una partida a partir del estado del tablero en ese momento con movimientos aleatorios
 #simulacion aleatoria pa crear csv
 def simulacion(nodo):
+    """
+    Simula una partida desde el estado del nodo con movimientos aleatorios hasta finalizar la partida.
+
+    Parámetros:
+        nodo (crear_nodo): Nodo desde el cual se simula la partida.
+
+    Retorna:
+        int: Resultado de la simulación (1: gana jugador actual, -1: pierde, 0: empate).
+    """
     resultado, _ , _ = partida_simulada(nodo.turno, nodo.posicion)
     return resultado
 
 def simulacion_con_red(nodo):
+    """
+    Simula una partida desde el estado del nodo y evalúa el resultado con una red neuronal entrenada.
+
+    Parámetros:
+        nodo (crear_nodo): Nodo desde el cual se simula y evalúa la partida.
+
+    Retorna:
+        int: Predicción de la red neuronal sobre la probabilidad de victoria para el jugador actual.
+    """
     resultado, tablero, turno = partida_simulada(nodo.turno, nodo.posicion)
     tablero_vector = np.array(tablero).flatten()
     turno_vector = np.array([turno])
@@ -128,6 +195,13 @@ def simulacion_con_red(nodo):
 
 #retropropagación
 def retropopagación (partida_simulada, nodo):
+    """
+    Propaga hacia arriba en el árbol los resultados de la simulación, actualizando visitas y recompensas.
+
+    Parámetros:
+        partida_simulada (int): Resultado o recompensa de la simulación desde el nodo.
+        nodo (crear_nodo): Nodo desde donde se inicia la propagación hacia el padre.
+    """
     actual = nodo
     while actual is not None:
         actual.visitas += 1
