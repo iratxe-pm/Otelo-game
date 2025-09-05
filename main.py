@@ -36,7 +36,7 @@ if __name__ == "__main__":
             elif modo == 2:
                 partida_mixta(EstadoJuego())
             elif modo == 3:
-                # partida_ia_vs_ia()  # para generar datos de entrenamiento
+                #partida_ia_vs_ia()  # para generar datos de entrenamiento
                 partida_automática(EstadoJuego())  # IA vs IA
 
             break 

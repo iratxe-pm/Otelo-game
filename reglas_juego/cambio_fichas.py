@@ -64,7 +64,7 @@ def obtener_fichas_cambiar(estado,ficha_propia,posicion_fila_ficha,posicion_colu
         propias = estado.ficha_negra()
         contrarias = estado.ficha_blanca()
 
-    propias.append([posicion_fila_ficha, posicion_columna_ficha])
+    propias = propias + [posicion_fila_ficha, posicion_columna_ficha]
 
     direcciones = [(-1,0),(1,0),(0,1),(0,-1),(1,-1),(-1,1),(1,1),(-1,-1)]
     fichas_cambiar_global = []

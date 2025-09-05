@@ -34,7 +34,7 @@ class crear_nodo:
         self.visitas = 0 
         self.recompensa_acomulada = 0
         
-def mcts(tablero,turno,iteraccion = 100):
+def mcts(tablero,turno,iteraccion = 10):
     """
     Ejecuta el algoritmo Monte Carlo Tree Search (MCTS) para elegir la mejor acción desde un estado dado.
 
@@ -47,9 +47,9 @@ def mcts(tablero,turno,iteraccion = 100):
         list: Acción seleccionada (fila, columna) que maximiza el valor esperado.
 
     * NOTA: si se quiere ejecutar el mcts sin red neuronal haga:
-        1º descomente la línea: " #partida_simulada = simulacion(nodo_seleccionado) " (Línea: 64)
-        2º comentar la línea: " partida_simulada_con_red = simulacion_con_red(nodo_seleccionado) " (Línea 65)
-        3º cambie en la llamada al método retropopagación(partida_simulada_con_red, nodo_seleccionado) (Línea 66)
+        1º descomente la línea: " #partida_simulada = simulacion(nodo_seleccionado) " (Línea: 63)
+        2º comentar la línea: " partida_simulada_con_red = simulacion_con_red(nodo_seleccionado) " (Línea 64)
+        3º cambie en la llamada al método retropopagación(partida_simulada_con_red, nodo_seleccionado) (Línea 65)
             partida_simulada_con_red por partida_simulada
     """
     estado_inicial = EstadoJuego()
@@ -57,11 +57,12 @@ def mcts(tablero,turno,iteraccion = 100):
     sincronizar_fichas_desde_tablero(estado_inicial)
     
     raiz = crear_nodo(estado_inicial,turno)
+    turno_raiz = turno
     for i in range(0,iteraccion):
         nodo_seleccionado = seleccion_nodo_siguiente(raiz)
         #partida_simulada = simulacion(nodo_seleccionado)
         partida_simulada_con_red = simulacion_con_red(nodo_seleccionado)
-        retropopagación(partida_simulada_con_red, nodo_seleccionado)
+        retropopagación(partida_simulada_con_red, nodo_seleccionado, turno_raiz)
 
     return seleccion_hijo_uct(raiz).action
 
@@ -162,27 +163,54 @@ def simulacion_con_red(nodo):
 
     Retorna:
         int: Predicción de la red neuronal sobre la probabilidad de victoria para el jugador actual.
+
+     * NOTA: si se quiere ejecutar el mcts sin red neuronal haga:
+
+        1º descomente las líneas comentadas (Línea 173, 174, 175)
+        2º comente las líneas 177, 178 (las dos siguientes)
+
     """
-    resultado, tablero, turno = partida_simulada(nodo.turno, nodo.posicion)
-    tablero_vector = np.array(tablero).flatten()
-    turno_vector = np.array([turno])
+    #resultado, tablero, turno = partida_simulada(nodo.turno, nodo.posicion)
+    #tablero_vector = np.array(tablero).flatten()
+    #turno_vector = np.array([turno])
+
+    tablero_vector = np.array(nodo.posicion.tablero).flatten()
+    turno_vector = np.array([nodo.turno])
     entrada_red = np.concatenate((tablero_vector, turno_vector))
     prediccion = red_otelo.predict(np.array([entrada_red]), verbose=0)[0][0]
 
     return prediccion
 
-def retropopagación (partida_simulada, nodo):
+def retropopagación (partida_simulada, nodo, turno_raiz):
     """
     Propaga hacia arriba en el árbol los resultados de la simulación, actualizando visitas y recompensas.
 
     Parámetros:
         partida_simulada (int): Resultado o recompensa de la simulación desde el nodo.
         nodo (crear_nodo): Nodo desde donde se inicia la propagación hacia el padre.
+        turno_raiz (turno): El turno desde el cual se simula la partida.
     """
     actual = nodo
+    turno_actual = nodo.turno
     while actual is not None:
         actual.visitas += 1
-        actual.recompensa_acomulada += partida_simulada
-        partida_simulada *= -1  
-        actual = actual.padre 
+        recompensa = 0
+        # recompensa vista desde la raíz
+        if turno_raiz == turno_actual:
+            if partida_simulada == 1:
+                recompensa = 1
+            if partida_simulada == 0:
+                recompensa = 0
+            else:
+                recompensa = -1
+        elif turno_raiz != turno_actual:
+            if partida_simulada == 1:
+                recompensa = -1
+            if partida_simulada == 0:
+                recompensa = 0
+            else:
+                recompensa = 1
+
+        actual.recompensa_acomulada += recompensa
+        actual = actual.padre
 

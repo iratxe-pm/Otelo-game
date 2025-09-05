@@ -39,20 +39,28 @@ print(objetivo.head())
 # Crear red 
 red_otelo = Sequential([
     Input(shape=(65,)),                   # entra 64 casillas + 1 turno
+    
+    Dense(512, activation='relu'),        
+    BatchNormalization(),
+    Dropout(0.2),  
+
     Dense(256, activation='relu'),        # capa grande = captar patrones complejos / relu = eficiente, aprede relaciones no lineale
-    Dropout(0.3),                         #apaga una parte de las neuronas pa q no memorice
+    BatchNormalization(),
+    Dropout(0.2),                         #apaga una parte de las neuronas pa q no memorice
 
     Dense(128, activation='relu'),
-    Dropout(0.3),
+    BatchNormalization(),
+    Dropout(0.1),
 
     Dense(64, activation='relu'),
-    Dropout(0.2),
+    BatchNormalization(),
+    Dropout(0.1),
 
     Dense(1, activation='tanh')           # Salida en rango [-1, 1]
 ])
 
 # Compilar 
-optimizador = SGD(learning_rate=0.001)
+optimizador = SGD(learning_rate=0.01)
 red_otelo.compile(
     optimizer=optimizador,
     loss='mean_squared_error',
@@ -64,7 +72,7 @@ red_otelo.fit(
     atributos_entrenamiento,        # entrenamiento
     objetivo_entrenamiento,         # objetivo
     batch_size=64,                  # Tamaño del "lote" de entrenamiento
-    epochs=300,                     # Número de veces que se recorre todo el dataset
+    epochs=375,                     # Número de veces que se recorre todo el dataset
     validation_split=0.1,           # Porcentaje de datos usados para validación
     verbose=1                       # Nivel de detalle de la salida en consola
 )

@@ -31,7 +31,7 @@ def partida_ia_vs_ia():
     """
     Ejecuta varias partidas entre dos IA usando MCTS y guarda los estados y resultados en un DataFrame.
     """
-    partidas = 20
+    partidas = 100
     fichero_ia_vs_ia = pd.DataFrame()
 
     for _ in range(partidas):
